@@ -1,7 +1,7 @@
 {
   "name": "dbc-new",
   "version": "1.0.0",
-  "main": "src/app.js",
+  "main": "src/app",
   "engines": {
     "node": "16.x"
   },
