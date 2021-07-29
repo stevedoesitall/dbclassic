@@ -1,0 +1,18 @@
+<div id="main-content">
+    <p>{{message}}</p>
+</div>
+
+<div id="links-container">
+    <h3>Helpful Links</h3>
+    <li><a href="/about">About</a></li>
+    <li><a href="/search">Search</a></li>
+</div>
+
+<div id="date-list">
+    <h3>Tweets by Day</h3>
+    <ul>
+        {{#each dates}}
+            <li><a href="/date/{{this}}">{{this}}</a></li>
+        {{/each}}
+    </ul>
+</div>

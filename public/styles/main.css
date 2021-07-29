@@ -1,0 +1,9 @@
+/* Order by IDs, then classes, then attributes, alphabetically */
+
+.tweet-block {
+	padding-bottom: 0.5em;
+}
+
+.tweet-time {
+	font-weight: bold;
+}

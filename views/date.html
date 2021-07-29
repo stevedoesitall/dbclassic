@@ -1,0 +1,25 @@
+<div id="main-content">
+    <p><a href="/">Home</a></p>
+    <h2>Tweets from {{date}}</h2>
+</div>
+
+<div id="date-list">
+    {{#each tweets}}
+        <div class="tweet-block">
+            <p class="tweet-time">{{this.formattedTime}}</p>
+            <p class="tweet-text">{{this.text}}</p>
+        </div>
+    {{/each}}
+</div>
+
+<div id="date-links">
+    {{#if prev}}
+        <p><a href="/date/{{prev}}">Previous</a></p>
+    {{/if}}
+
+    {{#if next}}
+        <p><a href="/date/{{next}}">Next</a></p>
+    {{/if}}
+</div>
+
+<meta name="title" content="Tweets from {{date}}">

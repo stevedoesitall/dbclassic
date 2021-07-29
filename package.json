@@ -1,0 +1,81 @@
+{
+  "name": "dbc-new",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "knexMigrate": "knex --esm migrate:make create_tables"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-node",
+    "transform": {}
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      "indent": [
+        "error",
+        "tab"
+      ],
+      "linebreak-style": [
+        "error",
+        "unix"
+      ],
+      "quotes": [
+        "error",
+        "double"
+      ],
+      "semi": [
+        "error",
+        "never"
+      ],
+      "no-unused-vars": "off",
+      "require-await": "off"
+    }
+  },
+  "eslintIgnore": [
+    "*.test.js",
+    "/node_modules",
+    "/dist",
+    "create-lists.js"
+  ],
+  "prettier": {
+    "trailingComma": "none",
+    "useTabs": true,
+    "semi": false,
+    "singleQuote": false,
+    "quoteProps": "as-needed",
+    "bracketSpacing": true
+  },
+  "author": "Steve Giordano",
+  "license": "ISC",
+  "description": "Fullstack app for the Dadboner Twitter account.",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.2",
+    "knex": "^0.95.8",
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.6.3",
+    "objection": "^2.2.15",
+    "pg": "^8.7.1"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2"
+  }
+}

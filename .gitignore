@@ -1,0 +1,7 @@
+/node_modules
+/dist
+/playground
+/__tests__
+db-creds.js
+.env
+.DS_Store

@@ -1,0 +1,15 @@
+<div id="main-content">
+    <p><a href="/">Home</a></p>
+    <h2>Tweet Page</h2>
+    <p>{{message}}</p>
+</div>
+
+{{#if prev}}
+    <a href="/tweet/{{prev}}">Previous</a>
+{{/if}}
+
+{{#if next}}
+    <a href="/tweet/{{next}}">Next</a>
+{{/if}}
+
+<meta name="title" content="{{message}}">
