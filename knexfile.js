@@ -20,7 +20,16 @@ const knexfile =  {
 
 	production: {
 		client: "postgresql",
-		connection: process.env.DATABASE_URL || prodCreds,
+		connection: {
+			host: process.env.DB_HOST || prodCreds.host,
+			database: process.env.DB_NAME || prodCreds.database,
+			user: process.env.DB_USER || prodCreds.user,
+			password: process.env.DB_PASS || prodCreds.password,
+			port: 5432,
+			ssl: { 
+				rejectUnauthorized: false
+			}
+		},
 		pool: {
 			min: 2,
 			max: 10
