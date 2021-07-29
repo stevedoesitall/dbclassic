@@ -66,6 +66,7 @@
   "license": "ISC",
   "description": "Fullstack app for the Dadboner Twitter account.",
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.2",
     "knex": "^0.95.8",
@@ -76,7 +77,6 @@
     "pg": "^8.7.1"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0",
     "eslint": "^7.31.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2"
