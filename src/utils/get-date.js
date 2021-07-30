@@ -3,7 +3,6 @@ import dotenv from "dotenv"
 import { dateList } from "./create-lists.js"
 
 dotenv.config()
-
 const getDate = async (date) => {
 	const tweetRes = await fetch(`${process.env.BASE_URL}/tweets/date/${date}`)
 	const data = await tweetRes.json()
@@ -13,14 +12,19 @@ const getDate = async (date) => {
 	}
 
 	data.map(tweet => {
-		const tweetDate = new Date(tweet.created_at)
-		tweet.hour = tweetDate.getHours() - 4
-		tweet.marker = tweetDate.getHours() > 12 ? "PM" : "AM"
-    
+		const FIVE_HOURS = 18_000_000
+		const tweetTime = new Date(tweet.created_at).getTime()
+		const tweetDate = new Date(tweetTime - FIVE_HOURS)
+
+		tweet.marker = tweetDate.getHours() >= 12 ? "PM" : "AM"
+		tweet.hour = tweetDate.getHours()
+
 		if (tweet.hour > 12) {
 			tweet.hour = tweet.hour - 12
 		} else if (tweet.hour === 0) {
 			tweet.hour = 12
+		} else if (tweet.hour < 0) {
+			tweet.hour = tweet.hour + 12
 		}
     
 		tweet.minute = tweetDate.getMinutes() < 10 ? "0" + tweetDate.getMinutes() : tweetDate.getMinutes(),

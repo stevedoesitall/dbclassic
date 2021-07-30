@@ -6,7 +6,7 @@
 <div id="date-list">
     {{#each tweets}}
         <div class="tweet-block">
-            <p class="tweet-time">{{this.formattedTime}}</p>
+            <p class="tweet-time"><a href="https://twitter.com/DadBoner/status/{{this.id}}">{{this.formattedTime}}</a></p>
             <p class="tweet-text">{{this.text}}</p>
         </div>
     {{/each}}
