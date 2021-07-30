@@ -101,5 +101,5 @@ const getTweets = async () => {
 }
 
 await getTweets()
-
+console.log(allDates[allDates.length - 1])
 export { tweetList, dateList, allDates }

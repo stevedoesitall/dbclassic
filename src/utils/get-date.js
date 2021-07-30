@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import { dateList } from "./create-lists.js"
 
 dotenv.config()
+
 const getDate = async (date) => {
 	const tweetRes = await fetch(`${process.env.BASE_URL}/tweets/date/${date}`)
 	const data = await tweetRes.json()
