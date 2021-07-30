@@ -2,7 +2,7 @@ import path from "path"
 import express from "express"
 import exphbs from "express-handlebars"
 
-import { allDates } from "./utils/create-lists.js"
+import getTweets from "./utils/create-lists.js"
 import { tweetsRouter } from "../routes/tweets.js"
 
 import getDate from "./utils/get-date.js"
@@ -30,7 +30,9 @@ app.use(express.static(publicPath))
 
 app.use("/tweets", tweetsRouter)
 
-app.get("", (req, res) => {
+app.get("", async (req, res) => {
+	const { allDates } = await getTweets()
+	console.log("GETTING DATES")
 	res.render("index", {
 		title: "Dadboner Classic",
 		message: "Really lookin' forward to the weekend, you guys.",

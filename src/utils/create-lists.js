@@ -1,8 +1,6 @@
 import Knex from "knex"
 import knexfile from "../../config/knexfile.js"
 
-const knex = Knex(knexfile.production)
-
 class Node {
 	constructor(val) {
 		this.val = val
@@ -58,11 +56,12 @@ class DoublyLinkedList {
 	}
 }
 
-const tweetList = new DoublyLinkedList()
-const dateList = new DoublyLinkedList()
-const allDates = []
-
 const getTweets = async () => {
+	const knex = Knex(knexfile.production)
+	const allDates = []
+	const tweetList = new DoublyLinkedList()
+	const dateList = new DoublyLinkedList()
+
 	try {
 		const results = await knex.raw("SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at asc;")
 		const tweets = results.rows
@@ -88,7 +87,7 @@ const getTweets = async () => {
             
 		})
 
-		return tweets
+		return { allDates, tweetList, dateList }
 
 	} catch (err) {
 		console.log(err)
@@ -97,9 +96,7 @@ const getTweets = async () => {
 		knex.destroy(() => {
 			console.log("Connection destroyed.")
 		})
-	} 
+	}
 }
 
-await getTweets()
-console.log(allDates[allDates.length - 1])
-export { tweetList, dateList, allDates }
+export default getTweets

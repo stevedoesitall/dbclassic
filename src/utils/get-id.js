@@ -1,11 +1,12 @@
 import fetch from "node-fetch"
 import dotenv from "dotenv"
-import { tweetList } from "./create-lists.js"
+import getTweets from "./create-lists.js"
 
 dotenv.config()
 
 const getId = async (tweetId) => {
 
+	const { tweetList } = await getTweets()
 	const tweetRes = await fetch(`${process.env.BASE_URL}/tweets/${tweetId}`)
 	const data = await tweetRes.json()
 
