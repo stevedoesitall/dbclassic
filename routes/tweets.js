@@ -1,6 +1,6 @@
 import express from "express"
 import Knex from "knex"
-import knexfile from "../knexfile.js"
+import knexfile from "../config/knexfile.js"
 import Tweet from "../models/Tweet.js"
 
 const router = express.Router()
@@ -50,10 +50,12 @@ router.get("/", async (req, res) => {
 		}
 
 		res.status(200).json(results.rows)
+
 	} catch (err) {
 		res.status(404).json({
 			error: err.toString()
 		})
+
 	} finally {
 		knex.destroy(() => {
 			console.log("Connection destroyed.")

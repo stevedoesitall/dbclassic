@@ -52,7 +52,8 @@
     "*.test.js",
     "/node_modules",
     "/dist",
-    "create-lists.js"
+    "create-lists.js",
+    "knexfile.js"
   ],
   "prettier": {
     "trailingComma": "none",

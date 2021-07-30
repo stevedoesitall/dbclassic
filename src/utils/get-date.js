@@ -14,8 +14,8 @@ const getDate = async (date) => {
 
 	data.map(tweet => {
 		const tweetDate = new Date(tweet.created_at)
-		tweet.marker = tweetDate.getHours() > 12 ? "PM" : "AM",
-		tweet.hour = tweetDate.getHours()
+		tweet.hour = tweetDate.getHours() - 4
+		tweet.marker = tweetDate.getHours() > 12 ? "PM" : "AM"
     
 		if (tweet.hour > 12) {
 			tweet.hour = tweet.hour - 12
