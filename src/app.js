@@ -57,8 +57,8 @@ app.get("/date/:date", async (req, res) => {
 	const date = req.params.date
 	const { data, prevDate, nextDate } = await getDate(date)
 
-	// const dateTime = new Date(date).getTime()
-	// const formattedDate = new Date(dateTime + 86400000).toDateString()
+	const dateTime = new Date(date).getTime()
+	const formattedDate = new Date(dateTime + 86400000).toDateString()
 
 	if (!data) {
 		return res.render("error")
@@ -69,7 +69,7 @@ app.get("/date/:date", async (req, res) => {
 		prev: prevDate,
 		next: nextDate,
 		date: date,
-		// formattedDate: formattedDate
+		formattedDate: formattedDate
 	})
 })
 
