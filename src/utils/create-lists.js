@@ -1,5 +1,6 @@
 import Knex from "knex"
 import knexfile from "../../config/knexfile.js"
+import { formatDateISO } from "./format-date-time.js"
 
 class Node {
 	constructor(val) {
@@ -28,12 +29,12 @@ class DoublyLinkedList {
 		}
 
 		this.length++
+
 		return this
 	}
 
 	get(value) {
 		const listSize = this.length
-
 		let counter = 0
 		let myNode
 		let currentNode = this.head
@@ -43,13 +44,11 @@ class DoublyLinkedList {
 				if (counter === listSize) {
 					return false
 				}
-
 				currentNode = currentNode.next
 				counter++
 			} else {
 				myNode = currentNode
 			}
-
 		}
 
 		return myNode
@@ -67,16 +66,7 @@ const getTweets = async () => {
 		const tweets = results.rows
 
 		tweets.forEach(tweet => {
-
-			const convertDate = (num) => num < 10 ? "0" + num : num
-			let tweetDate = new Date(tweet.date)
-
-			const tweetYear = tweetDate.getFullYear()
-			const tweetMonth = convertDate(tweetDate.getMonth() + 1)
-			const tweetDay = convertDate(tweetDate.getDate())
-
-			tweetDate = `${tweetYear}-${tweetMonth}-${tweetDay}`
-			tweetDate = tweetDate.substring(0, 10)
+			const tweetDate = formatDateISO(tweet.date)
 
 			if (!allDates.includes(tweetDate)) {
 				allDates.push(tweetDate)
@@ -84,7 +74,6 @@ const getTweets = async () => {
 			}
 
 			tweetList.push(tweet.id)
-            
 		})
 
 		return { allDates, tweetList, dateList }

@@ -7,6 +7,7 @@ import { tweetsRouter } from "../routes/tweets.js"
 
 import getDate from "./utils/get-date.js"
 import getId from "./utils/get-id.js"
+import { formatDateStr, formatTime } from "./utils/format-date-time.js"
 
 const app = express()
 
@@ -32,7 +33,7 @@ app.use("/tweets", tweetsRouter)
 
 app.get("", async (req, res) => {
 	const { allDates } = await getTweets()
-	console.log("GETTING DATES")
+
 	res.render("index", {
 		title: "Dadboner Classic",
 		message: "Really lookin' forward to the weekend, you guys.",
@@ -47,9 +48,10 @@ app.get("/tweet/:id", async (req, res) => {
 	if (!data) {
 		return res.render("error")
 	}
-
+	
 	res.render("tweet", {
-		message: data.text,
+		data: data,
+		formattedDateTime: `${formatDateStr(data.created_at, true)} @ ${formatTime(data)}`,
 		prev: prevTweet,
 		next: nextTweet
 	})
@@ -59,12 +61,11 @@ app.get("/date/:date", async (req, res) => {
 	const date = req.params.date
 	const { data, prevDate, nextDate } = await getDate(date)
 
-	const dateTime = new Date(date).getTime()
-	const formattedDate = new Date(dateTime).toDateString() //Check this logic
-
 	if (!data) {
 		return res.render("error")
 	}
+
+	const formattedDate = formatDateStr(date)
 
 	res.render("date", {
 		tweets: data,

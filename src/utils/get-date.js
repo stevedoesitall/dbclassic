@@ -1,6 +1,7 @@
 import fetch from "node-fetch"
 import dotenv from "dotenv"
 import getTweets from "./create-lists.js"
+import { formatTime } from "./format-date-time.js"
 
 dotenv.config()
 
@@ -14,24 +15,7 @@ const getDate = async (date) => {
 	}
 
 	data.map(tweet => {
-		const FIVE_HOURS = 18_000_000
-		const tweetTime = new Date(tweet.created_at).getTime()
-		const tweetDate = new Date(tweetTime - FIVE_HOURS)
-
-		tweet.marker = tweetDate.getHours() >= 12 ? "PM" : "AM"
-		tweet.hour = tweetDate.getHours()
-
-		if (tweet.hour > 12) {
-			tweet.hour = tweet.hour - 12
-		} else if (tweet.hour === 0) {
-			tweet.hour = 12
-		} else if (tweet.hour < 0) {
-			tweet.hour = tweet.hour + 12
-		}
-    
-		tweet.minute = tweetDate.getMinutes() < 10 ? "0" + tweetDate.getMinutes() : tweetDate.getMinutes(),
-		tweet.seconds = tweetDate.getSeconds() < 10 ? "0" + tweetDate.getSeconds() : tweetDate.getSeconds(),
-		tweet.formattedTime = `${tweet.hour}:${tweet.minute}:${tweet.seconds} ${tweet.marker}`
+		tweet.formattedTime = formatTime(tweet)
 	})
 
 	const prevDate = dateList.get(date).prev ? dateList.get(date).prev.val : null

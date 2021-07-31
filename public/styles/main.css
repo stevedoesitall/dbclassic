@@ -1,5 +1,5 @@
-/* Order by IDs, then classes, then attributes, alphabetically */
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;300&family=Roboto:wght@300&display=swap");
+/* Order by IDs, then classes, then attributes; sort alphabetically */
+@import url("../styles/vars.css");
 
 .date-item {
 	padding-bottom: 0.7em;
@@ -16,10 +16,10 @@
 h1,
 h2,
 h3 {
-	font-family: "Roboto", sans-serif;
+	font-family: var(--sans-serif-font);
 }
 
 li,
 p {
-	font-family: "Roboto Slab", serif;
+	font-family: var(--serif-font);
 }
