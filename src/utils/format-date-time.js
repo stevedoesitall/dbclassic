@@ -1,5 +1,3 @@
-//Clean up let/const, naming conventions
-
 const formatTime = (tweet) => {
 	const formattedTweet = tweet
 	const FIVE_HOURS = 18_000_000
@@ -26,16 +24,15 @@ const formatTime = (tweet) => {
 
 const formatDateISO = (date) => {
 	const convertDate = (num) => num < 10 ? "0" + num : num
-	let tweetDate = new Date(date)
+	const tweetDate = new Date(date)
 
 	const tweetYear = tweetDate.getFullYear()
 	const tweetMonth = convertDate(tweetDate.getMonth() + 1)
 	const tweetDay = convertDate(tweetDate.getDate())
 
-	tweetDate = `${tweetYear}-${tweetMonth}-${tweetDay}`
-	tweetDate = tweetDate.substring(0, 10)
+	const tweetDateSubString = `${tweetYear}-${tweetMonth}-${tweetDay}`.substring(0, 10)
 
-	return tweetDate
+	return tweetDateSubString
 }
 
 const formatDateStr = (date, makeISO = false) => {
