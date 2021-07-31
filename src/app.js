@@ -44,14 +44,15 @@ app.get("", async (req, res) => {
 app.get("/tweet/:id", async (req, res) => {
 	const tweetId = req.params.id
 	const { data, prevTweet, nextTweet } = await getId(tweetId)
-
+	const makeISO = true
+	
 	if (!data) {
 		return res.render("error")
 	}
 	
 	res.render("tweet", {
 		data: data,
-		formattedDateTime: `${formatDateStr(data.created_at, true)} @ ${formatTime(data)}`,
+		formattedDateTime: `${formatDateStr(data.created_at, makeISO)} @ ${formatTime(data)}`,
 		prev: prevTweet,
 		next: nextTweet
 	})
