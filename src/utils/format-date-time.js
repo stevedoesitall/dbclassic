@@ -1,6 +1,8 @@
+const convertDate = (num) => num < 10 ? "0" + num : num
+
 const formatTime = (tweet) => {
-	const formattedTweet = tweet
 	const FIVE_HOURS = 18_000_000
+	const formattedTweet = tweet
 	const tweetTime = new Date(formattedTweet.created_at).getTime()
 	const tweetDate = new Date(tweetTime - FIVE_HOURS)
 
@@ -15,17 +17,15 @@ const formatTime = (tweet) => {
 		formattedTweet.hour = tweet.hour + 12
 	}
 
-	formattedTweet.minute = tweetDate.getMinutes() < 10 ? "0" + tweetDate.getMinutes() : tweetDate.getMinutes(),
-	formattedTweet.seconds = tweetDate.getSeconds() < 10 ? "0" + tweetDate.getSeconds() : tweetDate.getSeconds(),
+	formattedTweet.minute = convertDate(tweetDate.getMinutes())
+	formattedTweet.seconds = convertDate(tweetDate.getSeconds())
 	formattedTweet.formattedTime = `${formattedTweet.hour}:${formattedTweet.minute}:${formattedTweet.seconds} ${formattedTweet.marker}`
     
 	return formattedTweet.formattedTime
 }
 
 const formatDateISO = (date) => {
-	const convertDate = (num) => num < 10 ? "0" + num : num
 	const tweetDate = new Date(date)
-
 	const tweetYear = tweetDate.getFullYear()
 	const tweetMonth = convertDate(tweetDate.getMonth() + 1)
 	const tweetDay = convertDate(tweetDate.getDate())

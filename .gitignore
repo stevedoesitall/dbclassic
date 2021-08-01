@@ -1,6 +1,7 @@
 /node_modules
 /dist
 /playground
+/sandbox
 /__tests__
 .env
 .DS_Store

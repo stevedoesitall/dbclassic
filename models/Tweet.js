@@ -5,7 +5,7 @@ class Tweet {
 	constructor(tweet) {
 		this.text = tweet.text
 		this.id = tweet.id
-		this.created_at = tweet.created_at
+		this.createdAt = tweet.created_at
 	}
 
 	async validateTweet() {
@@ -31,7 +31,7 @@ class Tweet {
 			}
 
 			const invalidDate = {
-				check: isNaN(new Date(this.created_at).getTime()),
+				check: isNaN(new Date(this.createdAt).getTime()),
 				msg: "Invalid date"
 			}
 

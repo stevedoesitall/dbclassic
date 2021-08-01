@@ -50,6 +50,10 @@ router.get("/", async (req, res) => {
 			return res.status(204).json()
 		}
 
+		results.rows.map(row => {
+			row.text = row.text.replaceAll("&amp;", "&")
+		})
+
 		res.status(200).json(results.rows)
 
 	} catch (err) {
@@ -78,6 +82,7 @@ router.get("/:id", async (req, res) => {
 			throw new Error(errMsg)
 		}
 
+		result.text = result.text.replaceAll("&amp;", "&")
 		res.status(200).json(result)
 	} catch (err) {
 		res.status(404).json({
