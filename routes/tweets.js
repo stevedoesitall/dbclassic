@@ -1,12 +1,12 @@
 import express from "express"
-import Knex from "knex"
-import knexfile from "../config/knexfile.js"
-import Tweet from "../models/Tweet.js"
+import pkg from "pg"
+import { prodCreds } from "../config/db-creds.js"
 
 const router = express.Router()
 
 router.get("/", async (req, res) => {
-	const knex = Knex(knexfile.production)
+	const { Pool } = pkg
+	const pool = new Pool(prodCreds)
 
 	try {
 		//Update search by date
@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
 			sort = "desc"
 		}
 
+		//Implement this; not currently functional
 		if (req.query.start_date || req.query.end_date) {
 			queryObj.created_at = {}
 		}
@@ -43,7 +44,7 @@ router.get("/", async (req, res) => {
 			textQuery = `WHERE text ILIKE '%${text}%'`
 		}
 
-		const results = await knex.raw(`SELECT * FROM tweets ${textQuery ? textQuery : ""} ORDER BY created_at ${sort} ;`)
+		const results = await pool.query(`SELECT * FROM tweets ${textQuery ? textQuery : ""} ORDER BY created_at ${sort} ;`)
 
 		if (!results.rows.length) {
 			return res.status(204).json()
@@ -57,19 +58,20 @@ router.get("/", async (req, res) => {
 		})
 
 	} finally {
-		knex.destroy(() => {
-			console.log("Connection destroyed.")
-		})
+		pool.end()
 	}
 })
 
 router.get("/:id", async (req, res) => {
 	const id = req.params.id
-	const knex = Knex(knexfile.production)
+	const { Pool } = pkg
+	const pool = new Pool(prodCreds)
+
 	let errMsg
 
 	try {
-		const result = await Tweet.query().findById(id)
+		const results = await pool.query(`SELECT * FROM tweets WHERE id = '${id}'`)
+		const result = results.rows[0]
 
 		if (!result) {
 			errMsg = `No tweet found with ID: ${id}. Kinda concering?`
@@ -82,19 +84,19 @@ router.get("/:id", async (req, res) => {
 			error: err.toString()
 		})
 	} finally {
-		knex.destroy(() => {
-			console.log("Connection destroyed.")
-		})
+		pool.end()
 	}
 })
 
 router.get("/date/:date", async (req, res) => {
 	const date = req.params.date
-	const knex = Knex(knexfile.production)
+	const { Pool } = pkg
+	const pool = new Pool(prodCreds)
+
 	let errMsg
 
 	try {
-		const results = await knex.raw(`SELECT * FROM tweets WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at asc;`)
+		const results = await pool.query(`SELECT * FROM tweets WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at asc;`)
 
 		if (!results.rows.length) {
 			errMsg = `No tweet found from this date: ${date}. Kinda concering?`
@@ -107,9 +109,7 @@ router.get("/date/:date", async (req, res) => {
 			error: err.toString()
 		})
 	} finally {
-		knex.destroy(() => {
-			console.log("Connection destroyed.")
-		})
+		pool.end()
 	}
 })
 

@@ -1,5 +1,5 @@
-import Knex from "knex"
-import knexfile from "../../config/knexfile.js"
+import pkg from "pg"
+import { prodCreds } from "../../config/db-creds.js"
 import { formatDateISO } from "./format-date-time.js"
 
 class Node {
@@ -56,13 +56,15 @@ class DoublyLinkedList {
 }
 
 const getTweets = async () => {
-	const knex = Knex(knexfile.production)
+	const { Pool } = pkg
+	const pool = new Pool(prodCreds)
+
 	const allDates = []
 	const tweetList = new DoublyLinkedList()
 	const dateList = new DoublyLinkedList()
 
 	try {
-		const results = await knex.raw("SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at asc;")
+		const results = await pool.query("SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at asc;")
 		const tweets = results.rows
 
 		tweets.forEach(tweet => {
@@ -82,9 +84,7 @@ const getTweets = async () => {
 		console.log(err)
 
 	} finally {
-		knex.destroy(() => {
-			console.log("Connection destroyed.")
-		})
+		pool.end()
 	}
 }
 

@@ -1,5 +1,5 @@
 /* Order by IDs, then classes, then attributes; sort alphabetically */
-@import url("../styles/vars.css");
+@import url("../styles/mystyles.css");
 
 .date-item {
 	padding-bottom: 0.7em;
