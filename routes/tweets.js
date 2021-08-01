@@ -50,10 +50,6 @@ router.get("/", async (req, res) => {
 			return res.status(204).json()
 		}
 
-		results.rows.map(row => {
-			row.text = row.text.replaceAll("&amp;", "&")
-		})
-
 		res.status(200).json(results.rows)
 
 	} catch (err) {
@@ -107,6 +103,10 @@ router.get("/date/:date", async (req, res) => {
 			errMsg = `No tweet found from this date: ${date}. Kinda concering?`
 			throw new Error(errMsg)
 		}
+
+		results.rows.map(row => {
+			row.text = row.text.replaceAll("&amp;", "&")
+		})
 
 		res.status(200).json(results.rows)
 	} catch (err) {
