@@ -1,4 +1,4 @@
-import setCookie from "./utils/set-cookie"
+// import setCookie from "./utils/set-cookie"
 
 const searchBtn = document.querySelector("#search")
 const tweetsContainer = document.querySelector("#tweets-list")
@@ -41,4 +41,4 @@ searchBtn.addEventListener("click", () => {
 	document.querySelector("#search-input").value = ""
 })
 
-setCookie()
+// setCookie()
