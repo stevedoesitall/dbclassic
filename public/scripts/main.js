@@ -1,3 +1,5 @@
+//NOTE: Bundle these all together!
+
 const searchBtn = document.querySelector("#search")
 const tweetsContainer = document.querySelector("#tweets-list")
 
