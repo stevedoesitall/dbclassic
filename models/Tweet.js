@@ -1,6 +1,7 @@
 import pkg from "pg"
 import { prodCreds } from "../config/db-creds.js"
 
+//Probably need to clean this up
 class Tweet {
 	constructor(tweet) {
 		this.text = tweet.text
