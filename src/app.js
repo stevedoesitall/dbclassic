@@ -48,7 +48,6 @@ app.get("", async (req, res) => {
 		lastPageview = data.last_pageview ? data.last_pageview : null
 	}
 
-	console.log(lastPageview)
 	res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
 		"sameSite": "strict",
 		"httpOnly": true
