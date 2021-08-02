@@ -14,17 +14,17 @@ const prodCreds = {
 
 const devCreds = {
 	host: process.env.DEV_HOST,
-	database: process.env.DEV_HOST,
-	user: process.env.DEV_HOST,
-	password: process.env.DEV_HOST,
+	database: process.env.DEV_NAME,
+	user: process.env.DEV_USER,
+	password: process.env.DEV_PASS,
 	port: 5432
 }
 
 const stagingCreds = {
 	host: process.env.STAGE_HOST,
-	database: process.env.STAGE_HOST,
-	user: process.env.STAGE_HOST,
-	password: process.env.STAGE_HOST,
+	database: process.env.STAGE_NAME,
+	user: process.env.STAGE_USER,
+	password: process.env.STAGE_PASS,
 	port: 5432
 }
 

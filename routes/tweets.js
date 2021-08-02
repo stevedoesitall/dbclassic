@@ -74,7 +74,7 @@ router.get("/:id", async (req, res) => {
 		const result = results.rows[0]
 
 		if (!result) {
-			errMsg = `No tweet found with ID: ${id}. Kinda concering?`
+			errMsg = `No tweet found with ID: ${id}. Kinda concerning?`
 			throw new Error(errMsg)
 		}
 
