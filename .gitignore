@@ -2,6 +2,6 @@
 /dist
 /playground
 /sandbox
-/__tests__
+/test
 .env
 .DS_Store

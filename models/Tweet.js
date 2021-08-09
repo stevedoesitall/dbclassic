@@ -1,63 +1,104 @@
-import pkg from "pg"
-import { prodCreds } from "../config/db-creds.js"
 
-//Probably need to clean this up
-class Tweet {
-	constructor(tweet) {
-		this.text = tweet.text
-		this.id = tweet.id
-		this.createdAt = tweet.created_at
-	}
+import Model from "./Model.js"
+import { pool } from "../config/database.js"
 
-	async validateTweet() {
-		const { Pool } = pkg
-		const pool = new Pool(prodCreds)
+const modelTable = "tweets"
 
-		try {
-			const results = await pool.query(`SELECT * FROM tweets WHERE id = '${this.id}'`)
+class Tweet extends Model {
+    #table
 
-			const tweetExists = {
-				check: results.rows.length,
-				msg: "Tweet exists"
-			}
+    constructor(table) {
+        super(table = modelTable)
+        this.#table = modelTable
+    }
 
-			const invalidId = {
-				check: !this.id,
-				msg: "Invalid ID"
-			}
-			
-			const invalidLength = {
-				check: !this.text.length || this.text.length > 280,
-				msg: "Invalid tweet length"
-			}
+    async fetchByDate(date) {
+        const errMsg = `No tweet found from this date: ${date}. Kinda concering?`
 
-			const invalidDate = {
-				check: isNaN(new Date(this.createdAt).getTime()),
-				msg: "Invalid date"
-			}
+        try {
+            const results = await pool.query(`SELECT * FROM ${this.#table} WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at asc;`)
 
-			if (tweetExists.check) {
-				throw new Error(tweetExists.msg)
+            if (!results.rows.length) {
+                throw new Error(errMsg)
+            }
+    
+            results.rows.map(row => {
+                row.text = row.text.replaceAll("&amp;", "&")
+            })
+    
+            return results.rows
 
-			} else if (invalidId.check) {
-				throw new Error(invalidId.msg)
+        } catch(err) {
+            return {
+                error: errMsg
+            }
 
-			} else if (invalidLength.check) {
-				throw new Error(invalidLength.msg)
+        } finally {
+            console.log(`fetchByDate completed on ${this.#table} table`)
+        }
+    }
 
-			} else if (invalidDate.check) {
-				throw new Error(invalidDate.msg)
-			}
+    async fetchByText(text) {
+        let errMsg
 
-			return true
+        try {
+            const results = await pool.query(`SELECT * FROM ${this.#table} WHERE text ILIKE '%${text}%' ORDER BY created_at ASC;`)
+            
+            if (!results.rows.length) {
+                errMsg = "No tweets found."
+                throw new Error(errMsg)
+            }
+    
+            results.rows.map(row => {
+                row.text = row.text.replaceAll("&amp;", "&")
+            })
+    
+            return results.rows
 
-		} catch(err) {
-			return err
+        } catch(err) {
+            return {
+                error: errMsg
+            }
+            
+        } finally {
+            console.log(`fetchByText completed on ${this.#table} table`)
+        }  
+    }
 
-		} finally {
-			pool.end()
-		}
-	}
+    async insertOne(id, text, createdAt) {
+        let errMsg
+
+        try {
+            if (!id || !text || !createdAt) {
+                errMsg = "Please provide all required fields."
+                throw new Error(errMsg)
+            }
+
+            const result = await this.fetchOne(id)
+            if (!result.error) {
+                errMsg = `Tweet ID ${id} already exists.`
+                throw new Error(errMsg)
+            }
+
+            await pool.query(`
+                INSERT INTO ${this.#table} (id, text, created_at)
+                VALUES ('${id}', '${text}','${createdAt}');
+            `)
+
+            return {
+                ok: true
+            }
+
+        } catch(err) {
+            return {
+                error: errMsg
+            }
+
+        } finally {
+            console.log(`insertOne completed on ${this.#table} table`)
+        }
+
+    }
 }
 
 export default Tweet

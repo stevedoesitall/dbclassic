@@ -1,5 +1,4 @@
-import pkg from "pg"
-import { prodCreds } from "../../config/db-creds.js"
+import Tweet from "../../../models/Tweet.js"
 import { formatDateISO } from "./format-date-time.js"
 
 class Node {
@@ -56,36 +55,26 @@ class DoublyLinkedList {
 }
 
 const getTweets = async () => {
-	const { Pool } = pkg
-	const pool = new Pool(prodCreds)
 
 	const allDates = []
 	const tweetList = new DoublyLinkedList()
 	const dateList = new DoublyLinkedList()
 
-	try {
-		const results = await pool.query("SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at asc;")
-		const tweets = results.rows
+	const results = await new Tweet().fetchAll()
 
-		tweets.forEach(tweet => {
-			const tweetDate = formatDateISO(tweet.date)
+	results.forEach(tweet => {
+		const tweetDate = formatDateISO(tweet.date)
 
-			if (!allDates.includes(tweetDate)) {
-				allDates.push(tweetDate)
-				dateList.push(tweetDate)
-			}
+		if (!allDates.includes(tweetDate)) {
+			allDates.push(tweetDate)
+			dateList.push(tweetDate)
+		}
 
-			tweetList.push(tweet.id)
-		})
+		tweetList.push(tweet.id)
+	})
 
-		return { allDates, tweetList, dateList }
+	return { allDates, tweetList, dateList }
 
-	} catch (err) {
-		console.log(err)
-
-	} finally {
-		pool.end()
-	}
 }
 
 export default getTweets

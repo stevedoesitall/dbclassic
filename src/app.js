@@ -1,18 +1,14 @@
 import path from "path"
+import cron from "node-cron"
 import express from "express"
 import exphbs from "express-handlebars"
 import cookieParser from "cookie-parser"
+import session  from "express-session"
+import { v4 as uuidv4 } from "uuid"
 
-import getTweets from "./utils/create-lists.js"
-import { tweetsRouter } from "../routes/tweets.js"
-import { usersRouter } from "../routes/users.js"
-
-//Let's look to consolidate these
-import getDate from "./utils/get-date.js"
-import getId from "./utils/get-id.js"
-import { getUser, postUser } from "./utils/get-user.js"
-
-import { formatDateStr, formatTime } from "./utils/format-date-time.js"
+import router from "../routes/index.js"
+import _ from "./utils/index.js"
+import insertTweets from "./utils/helpers/insert-tweets.js"
 
 const app = express()
 
@@ -25,33 +21,75 @@ const port = process.env.PORT || 8083
 const __dirname = path.resolve() //Double check what path.resolve() does
 
 const publicPath = path.join(__dirname, "./public")
-const viewsPath = path.join(__dirname, "views")
+const viewsPath = path.join(__dirname, "./public/views")
 
-app.engine(".html", exphbs({ extname: ".html" }))
+app.engine(".html", exphbs({ 
+	extname: ".html", 	
+	partialsDir: [
+		"./public/views/partials/blocks",
+		"./public/views/partials/ui"
+	] 
+}))
+
 app.set("view engine", ".html")
-
-//NOTE: Set up partials path
 app.set("views", viewsPath)
 
 app.use(express.static(publicPath))
 
-app.use("/tweets", tweetsRouter)
-app.use("/users", usersRouter)
+const sessionObj = {
+	name: "momus_session",
+	genid: () => {
+		return uuidv4()
+	},
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		sameSite: true
+	}
+}
+  
+if (app.get("env") === "production") {
+	app.set("trust proxy", 1)
+	sessionObj.cookie.secure = true
+}
+  
+app.use(session(sessionObj))
 
-app.get("", async (req, res) => {
-	const { allDates } = await getTweets()
-	const userCookies = req.cookies
-	let lastPageview
+app.use("/tweets", router.tweets)
+app.use("/users", router.users)
 
-	if (userCookies.momus_id) {
-		const data = await getUser(userCookies.momus_id)
-		lastPageview = data.last_pageview ? data.last_pageview : null
+app.get("*", async (req, res, next) => {
+	
+	//Update this to a unique cookie for users, also need to add some login functionality
+
+	if (!req.cookies.momus_id) {
+		res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
+			"sameSite": "strict",
+			"httpOnly": true
+		})
 	}
 
-	res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
-		"sameSite": "strict",
-		"httpOnly": true
-	})
+	if (req.session.views) {
+		req.session.views++
+	} else {
+		req.session.views = 1
+	}
+
+	next()
+})
+
+app.get("", async (req, res) => {
+	const { allDates } = await _.getTweets()
+	
+	let lastPageview
+
+	const userCookies = req.cookies
+	
+	if (userCookies.momus_id) {
+		const data = await _.getUser(userCookies.momus_id)
+		lastPageview = data.last_pageview ? data.last_pageview : null
+	}
 
 	res.render("index", {
 		title: "Dadboner Classic",
@@ -63,7 +101,7 @@ app.get("", async (req, res) => {
 
 app.get("/tweet/:id", async (req, res) => {
 	const tweetId = req.params.id
-	const { data, prevTweet, nextTweet } = await getId(tweetId)
+	const { data, prevTweet, nextTweet } = await _.getTweetById(tweetId)
 	const makeISO = true
 	
 	if (!data) {
@@ -72,7 +110,7 @@ app.get("/tweet/:id", async (req, res) => {
 	
 	res.render("tweet", {
 		data: data,
-		formattedDateTime: `${formatDateStr(data.created_at, makeISO)} @ ${formatTime(data)}`,
+		formattedDateTime: `${_.formatDateStr(data.created_at, makeISO)} @ ${_.formatTime(data)}`,
 		prev: prevTweet,
 		next: nextTweet
 	})
@@ -80,21 +118,26 @@ app.get("/tweet/:id", async (req, res) => {
 
 app.get("/date/:date", async (req, res) => {
 	const date = req.params.date
-	const { data, prevDate, nextDate } = await getDate(date)
+	const { data, prevDate, nextDate } = await _.getTweetByDate(date)
 
 	const userCookies = req.cookies
 
 	if (userCookies.momus_id) {
 		//Use this to manage user data and recs
-		const update = await postUser(userCookies.momus_id, date)
-		console.log(update)
+		try {
+			await _.postUser(userCookies.momus_id, date)
+		} catch (err) {
+			console.log(err)
+		} finally {
+			console.log("Cookie setting finished")
+		}
 	}
 
 	if (!data) {
 		return res.render("error")
 	}
 
-	const formattedDate = formatDateStr(date)
+	const formattedDate = _.formatDateStr(date)
 
 	res.render("date", {
 		tweets: data,
@@ -111,6 +154,10 @@ app.get("/search", (req, res) => {
 
 app.get("*", (req, res) => {
 	res.render("error")
+})
+
+cron.schedule("1 0 * * *", async () => {
+	await insertTweets()
 })
 
 app.listen(port, (err) => {
