@@ -54,7 +54,8 @@ const tweetsController = {
 	post: {
 		async addOne(req, res) {
 			const { id, text, created_at: createdAt } = req.body
-			const insert = await new Tweet().insertOne(id, text, createdAt)
+			const escapedText = text.replaceAll("'", "''")
+			const insert = await new Tweet().insertOne(id, escapedText, createdAt)
 
 			if (insert.error) {
 				return res.status(404).json({

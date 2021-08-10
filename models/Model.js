@@ -33,7 +33,7 @@ class Model {
     }
 
     //Update to fetchById
-    async fetchOne(id) {
+    async fetchById(id) {
         let errMsg
 
         try {

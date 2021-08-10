@@ -62,10 +62,10 @@ app.get("*", async (req, res, next) => {
 	const userCookies = req.cookies
 
 	if (!userCookies.momus_id) {
-		res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
-			"sameSite": "strict",
-			"httpOnly": true
-		})
+		// res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
+		// 	"sameSite": "strict",
+		// 	"httpOnly": true
+		// })
 	}
 
 	if (req.session.views) {
@@ -149,6 +149,10 @@ app.get("/date/:date", async (req, res) => {
 
 app.get("/search", (req, res) => {
 	res.render("search")
+})
+
+app.get("/login", (req, res) => {
+	res.render("login")
 })
 
 app.get("*", (req, res) => {

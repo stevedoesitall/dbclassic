@@ -15,13 +15,32 @@ const usersController = {
 		async byId(req, res) {
 			const id = req.params.id
     
-			const result = await new User().fetchOne(id)
+			const result = await new User().fetchById(id)
             
 			if (result.error) {
 				return res.status(404).json({
 					error: result.error
 				})
 			}
+                
+			return res.status(200).json(result)
+		},
+
+		async byName(req, res) {
+			const name = req.params.name
+    
+			const result = await new User().fetchByName(name)
+            
+			if (result.error) {
+				return res.status(404).json({
+					error: result.error
+				})
+			}
+
+			res.cookie("momus_id", result.id, {
+				"sameSite": "strict",
+				"httpOnly": true
+			})
                 
 			return res.status(200).json(result)
 		}

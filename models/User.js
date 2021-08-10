@@ -12,6 +12,30 @@ class User extends Model {
         this.#table = modelTable
     }
 
+    async fetchByName(name) {
+        let errMsg
+
+        try {
+            const results = await pool.query(`SELECT * FROM ${this.#table} WHERE user_name = '${name}';`)
+            const result = results.rows[0]
+
+            if (!result) {
+                errMsg = `User Name ${name} does not exist on ${this.#table} table.`
+                throw new Error(errMsg)
+            }
+
+            return result
+
+        } catch(err) {
+            return {
+                error: errMsg
+            }
+
+        } finally {
+            console.log(`fetchOne completed on ${this.#table} table`)
+        }
+    }
+
     async insertOne(id, userName, password) {
         let errMsg
         try {
@@ -53,7 +77,7 @@ class User extends Model {
             const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
 
             if (updatesCheck.length !== updateKeys.length) {
-                errMsg = "Invalid update parameters" 
+                errMsg = "Invalid update parameters provided." 
                 throw new Error(errMsg)
             }
 

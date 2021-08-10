@@ -18,10 +18,10 @@ const prodCreds = {
 }
 
 const devCreds = {
-	host: process.env.DEV_HOST || "localhost",
-	database: process.env.DEV_NAME || "dbclassic",
-	user: process.env.DEV_USER || "postgres",
-	password: process.env.DEV_PASS || "admin",
+	host: "localhost",
+	database: "dbclassic",
+	user: "postgres",
+	password: "admin",
 	port: 5432
 }
 
@@ -37,7 +37,7 @@ let credsToUse
 
 //Update this - staging enviornment never being invoked
 if (enviornment === "development") {
-	credsToUse = prodCreds
+	credsToUse = devCreds
 } else if (enviornment === "staging") {
 	credsToUse = stagingCreds
 } else {
