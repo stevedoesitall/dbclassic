@@ -3,8 +3,6 @@ import cron from "node-cron"
 import express from "express"
 import exphbs from "express-handlebars"
 import cookieParser from "cookie-parser"
-import redis from "redis"
-import connectRedis from "connect-redis"
 import session  from "express-session"
 import { v4 as uuidv4 } from "uuid"
 
@@ -36,18 +34,12 @@ app.set("views", viewsPath)
 
 app.use(express.static(publicPath))
 
-const RedisStore = connectRedis(session)
-const redisClient = redis.createClient()
-
 const sessionObj = {
 	name: "momus_session",
 	genid: () => {
 		return uuidv4()
 	},
 	secret: process.env.SESSION_SECRET,
-	// store: new RedisStore({
-	// 	client: redisClient
-	// }),
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
