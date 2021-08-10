@@ -1,11 +1,12 @@
 import Tweet from "../../../models/Tweet.js"
-import getTweets from "../helpers/create-lists.js"
-import { formatTime } from "../helpers/format-date-time.js"
+import getTweets from "./create-lists.js"
+import { formatTime } from "./format-date-time.js"
 
+const tweet = new Tweet()
 const getTweetById = async (tweetId) => {
 
 	const { tweetList } = await getTweets()
-	const data = await new Tweet().fetchOne(tweetId)
+	const data = await tweet.fetchOne(tweetId)
 
 	if (data.error) {
 		return true
@@ -19,7 +20,7 @@ const getTweetById = async (tweetId) => {
 
 const getTweetByDate = async (date) => {
 	const { dateList } = await getTweets()
-	const data = await new Tweet().fetchByDate(date)
+	const data = await tweet.fetchByDate(date)
 
 	if (!data.length) {
 		return true

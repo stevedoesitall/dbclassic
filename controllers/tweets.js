@@ -16,7 +16,7 @@ const tweetsController = {
 				return res.status(204).json()
 			}
 		
-			res.status(200).json(results)
+			return res.status(200).json(results)
 		},
 	
 		async byId(req, res) {
@@ -32,7 +32,7 @@ const tweetsController = {
 		
 			result.text = result.text.replaceAll("&amp;", "&")
 			
-			res.status(200).json(result)
+			return res.status(200).json(result)
 		},
 	
 		async byDate(req, res) {
@@ -47,7 +47,7 @@ const tweetsController = {
 				})
 			}
 		
-			res.status(200).json(results)
+			return res.status(200).json(results)
 		}
 	},
 
@@ -62,7 +62,7 @@ const tweetsController = {
 				})
 			}
                 
-			res.status(200).json(insert)
+			return res.status(200).json(insert)
 		}
 	},
 

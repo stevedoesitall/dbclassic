@@ -8,4 +8,6 @@ router.get("/:id", usersController.get.byId)
 
 router.post("/", usersController.post.addOne)
 
+router.put("/", usersController.put.updateOne)
+
 export { router as usersRouter }

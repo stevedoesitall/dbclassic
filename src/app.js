@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from "uuid"
 
 import router from "../routes/index.js"
 import _ from "./utils/index.js"
-import insertTweets from "./utils/helpers/insert-tweets.js"
 
 const app = express()
 
@@ -49,7 +48,7 @@ const sessionObj = {
 	}
 }
   
-if (app.get("env") === "production") {
+if (process.env.NODE_ENV === "production") {
 	app.set("trust proxy", 1)
 	sessionObj.cookie.secure = true
 }
@@ -125,7 +124,7 @@ app.get("/date/:date", async (req, res) => {
 	if (userCookies.momus_id) {
 		//Use this to manage user data and recs
 		try {
-			await _.postUser(userCookies.momus_id, date)
+			await _.updateUser(userCookies.momus_id, date)
 		} catch (err) {
 			console.log(err)
 		} finally {
@@ -157,7 +156,7 @@ app.get("*", (req, res) => {
 })
 
 cron.schedule("1 0 * * *", async () => {
-	await insertTweets()
+	await _.insertTweets()
 })
 
 app.listen(port, (err) => {

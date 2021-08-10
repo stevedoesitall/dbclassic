@@ -45,6 +45,51 @@ class User extends Model {
     }
 
     async updateOne(id, updates) {
+        let errMsg
+
+        try {
+            const updateKeys = Object.keys(updates)
+            const allowedUpdates = [ "lastPageview", "password" ]
+            const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
+
+            if (updatesCheck.length !== updateKeys.length) {
+                errMsg = "Invalid update parameters" 
+                throw new Error(errMsg)
+            }
+
+            const fieldsMap = {
+                lastPageview: "last_pageview",
+                password: "password"
+            }
+
+            const lastUpdateDate = new Date().toISOString()
+
+            let updateQuery = `UPDATE ${this.#table} SET last_update_date = '${lastUpdateDate}', `
+
+            updateKeys.forEach((update, index) => {
+                const column = fieldsMap[update]
+                if (updateKeys.length === (index + 1)) {
+                    updateQuery = updateQuery + `${column} = '${updates[update]}'`
+                } else {
+                    updateQuery = updateQuery + `${column} = '${updates[update]}', `
+                }
+            })
+
+            updateQuery = updateQuery + ` WHERE id = '${id}'`
+
+            await pool.query(updateQuery)
+
+            return {
+                ok: true
+            }
+
+        } catch(err) {
+            return {
+                error: errMsg
+            }
+        } finally {
+            console.log(`updateOne completed on ${this.#table} table`)
+        }
 
     }
 }

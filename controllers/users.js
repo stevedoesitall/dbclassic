@@ -9,7 +9,7 @@ const usersController = {
 				return res.status(204).json()
 			}
         
-			res.status(200).json(results)
+			return res.status(200).json(results)
 		},
     
 		async byId(req, res) {
@@ -23,7 +23,7 @@ const usersController = {
 				})
 			}
                 
-			res.status(200).json(result)
+			return res.status(200).json(result)
 		}
 	},
 
@@ -38,21 +38,24 @@ const usersController = {
 				})
 			}
                 
-			res.status(200).json(insert)
+			return res.status(200).json(insert)
 		}
 	},
 
 	put: {
-		// async byId(req, res) {
-		// 	const id = req.params.id
-		// 	//Fix this
-		// 	const updates = req.body.updates
+		async updateOne(req, res) {
+			const { id, updates } = req.body
             
-		// 	if (updates.lastPage) {
-		// 		const lastPage = updates.lastPage
-		//         const result = await new User()
-		// 	}
-		// }
+			const update = await new User().updateOne(id, updates)
+
+			if (update.error) {
+				return res.status(404).json({
+					error: update.error
+				})
+			}
+                
+			return res.status(200).json(update)
+		}
 	},
 
 	delete: {

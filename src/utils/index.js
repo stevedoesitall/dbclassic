@@ -1,8 +1,8 @@
 import getTweets from "./helpers/create-lists.js"
 import insertTweets from "./helpers/insert-tweets.js"
 import { formatDateISO, formatDateStr, formatTime } from "./helpers/format-date-time.js"
-import { getTweetById, getTweetByDate } from "./routes/tweets.js"
-import { getUser, postUser } from "./routes/users.js"
+import { getTweetById, getTweetByDate } from "./helpers/get-tweets-lists.js"
+import { getUser, updateUser } from "./helpers/get-update-users.js"
 
 const _ = {
 	getTweets,
@@ -13,7 +13,7 @@ const _ = {
 	getTweetByDate,
 	getUser,
 	insertTweets,
-	postUser
+	updateUser
 }
 
 export default _

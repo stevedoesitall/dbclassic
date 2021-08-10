@@ -32,6 +32,7 @@ class Model {
         }
     }
 
+    //Update to fetchById
     async fetchOne(id) {
         let errMsg
 

@@ -37,7 +37,7 @@ let credsToUse
 
 //Update this - staging enviornment never being invoked
 if (enviornment === "development") {
-	credsToUse = devCreds
+	credsToUse = prodCreds
 } else if (enviornment === "staging") {
 	credsToUse = stagingCreds
 } else {
