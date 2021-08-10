@@ -45,9 +45,9 @@ const sessionObj = {
 		return uuidv4()
 	},
 	secret: process.env.SESSION_SECRET,
-	store: new RedisStore({
-		client: redisClient
-	}),
+	// store: new RedisStore({
+	// 	client: redisClient
+	// }),
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
