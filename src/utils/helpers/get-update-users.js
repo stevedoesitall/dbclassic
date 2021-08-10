@@ -2,7 +2,7 @@ import User from "../../../models/User.js"
 const user = new User()
 
 const getUser = async (userId) => {
-	return await user.fetchOne(userId)
+	return await user.fetchById(userId)
 }
 
 const updateUser = async (userId, date) => {
