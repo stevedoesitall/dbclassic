@@ -3,6 +3,8 @@ import cron from "node-cron"
 import express from "express"
 import exphbs from "express-handlebars"
 import cookieParser from "cookie-parser"
+import redis from "redis"
+import connectRedis from "connect-redis"
 import session  from "express-session"
 import { v4 as uuidv4 } from "uuid"
 
@@ -11,13 +13,12 @@ import _ from "./utils/index.js"
 
 const app = express()
 
-// Needed for POST/PUT requests; not currently functional
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cookieParser())
 
 const port = process.env.PORT || 8083
-const __dirname = path.resolve() //Double check what path.resolve() does
+const __dirname = path.resolve()
 
 const publicPath = path.join(__dirname, "./public")
 const viewsPath = path.join(__dirname, "./public/views")
@@ -35,12 +36,18 @@ app.set("views", viewsPath)
 
 app.use(express.static(publicPath))
 
+const RedisStore = connectRedis(session)
+const redisClient = redis.createClient()
+
 const sessionObj = {
 	name: "momus_session",
 	genid: () => {
 		return uuidv4()
 	},
 	secret: process.env.SESSION_SECRET,
+	store: new RedisStore({
+		client: redisClient
+	}),
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
@@ -59,10 +66,10 @@ app.use("/tweets", router.tweets)
 app.use("/users", router.users)
 
 app.get("*", async (req, res, next) => {
-	
 	//Update this to a unique cookie for users, also need to add some login functionality
+	const userCookies = req.cookies
 
-	if (!req.cookies.momus_id) {
+	if (!userCookies.momus_id) {
 		res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
 			"sameSite": "strict",
 			"httpOnly": true
@@ -79,7 +86,7 @@ app.get("*", async (req, res, next) => {
 })
 
 app.get("", async (req, res) => {
-	const { allDates } = await _.getTweets()
+	const { allDates, yearHeaders } = await _.getTweets()
 	
 	let lastPageview
 
@@ -94,7 +101,8 @@ app.get("", async (req, res) => {
 		title: "Dadboner Classic",
 		message: "Really lookin' forward to the weekend, you guys.",
 		dates: allDates,
-		lastPageview: lastPageview
+		lastPageview: lastPageview,
+		yearHeaders: yearHeaders
 	})
 })
 

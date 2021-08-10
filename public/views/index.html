@@ -2,6 +2,17 @@
     <p>{{message}}</p>
 </div>
 
+<div id="year-menu">
+    <h3>Jump to Year</h3>
+    <select id="year-select">
+    {{#each yearHeaders}}
+        <option class="year-option" value="{{this.firstDay}}">{{this.year}}</option>
+    {{/each}}
+    </select>
+    <p><a id="jump-button" href="#{{yearHeaders.0.firstDay}}">Go</a></p>
+
+</div>
+
 <div id="links-container">
     <h3>Helpful Links</h3>
     <ul>
@@ -17,7 +28,9 @@
     <h3>Tweets by Day</h3>
     <ul>
         {{#each dates}}
-            <li class="date-item"><a href="/date/{{this}}">{{this}}</a></li>
+            <li id="day-{{this}}" class="date-item"><a href="/date/{{this}}">{{this}}</a></li>
         {{/each}}
     </ul>
 </div>
+
+<script src="../scripts/utils/jump-page.js"></script>

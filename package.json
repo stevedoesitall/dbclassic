@@ -64,6 +64,7 @@
   "license": "ISC",
   "description": "Fullstack app for the Dadboner Twitter account.",
   "dependencies": {
+    "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
@@ -73,6 +74,7 @@
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.3",
     "pg": "^8.7.1",
+    "redis": "^3.1.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

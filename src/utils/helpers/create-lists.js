@@ -73,7 +73,18 @@ const getTweets = async () => {
 		tweetList.push(tweet.id)
 	})
 
-	return { allDates, tweetList, dateList }
+	const uniqueYears = [...new Set(allDates.map(date => date.substring(0, 4)))]
+	const yearHeaders = []
+
+	uniqueYears.forEach(year => {
+		const firstDay = allDates.find(day => day.substring(0, 4) === year)
+		yearHeaders.push({
+			year,
+			firstDay
+		})
+	})
+
+	return { allDates, tweetList, dateList, yearHeaders }
 
 }
 
