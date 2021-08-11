@@ -1,10 +1,6 @@
 /* Order by IDs, then classes, then attributes; sort alphabetically */
 @import url("../styles/mystyles.css");
 
-.date-item {
-	padding-bottom: 0.7em;
-}
-
 .emphasis {
 	font-weight: bold;
 }
@@ -25,10 +21,6 @@
 	padding-bottom: 0.5em;
 }
 
-.tweet-time {
-	font-weight: bold;
-}
-
 h1,
 h2,
 h3 {
@@ -38,4 +30,5 @@ h3 {
 li,
 p {
 	font-family: var(--serif-font);
+	padding-bottom: 0.7em;
 }
