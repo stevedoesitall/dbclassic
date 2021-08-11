@@ -6,7 +6,7 @@ const tweet = new Tweet()
 const getTweetById = async (tweetId) => {
 
 	const { tweetList } = await getTweets()
-	const data = await tweet.fetchOne(tweetId)
+	const data = await tweet.fetchById(tweetId)
 
 	if (data.error) {
 		return true

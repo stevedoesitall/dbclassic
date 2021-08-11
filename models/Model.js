@@ -32,7 +32,6 @@ class Model {
         }
     }
 
-    //Update to fetchById
     async fetchById(id) {
         let errMsg
 
@@ -53,7 +52,7 @@ class Model {
             }
 
         } finally {
-            console.log(`fetchOne completed on ${this.#table} table`)
+            console.log(`fetchById completed on ${this.#table} table`)
         }
     }
 }

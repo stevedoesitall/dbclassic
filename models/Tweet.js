@@ -74,7 +74,7 @@ class Tweet extends Model {
                 throw new Error(errMsg)
             }
 
-            const result = await this.fetchOne(id)
+            const result = await this.fetchById(id)
             if (!result.error) {
                 errMsg = `Tweet ID ${id} already exists.`
                 throw new Error(errMsg)
