@@ -69,11 +69,18 @@ class User extends Model {
     }
 
     async updateOne(id, updates) {
+        console.log(updates)
         let errMsg
 
         try {
             const updateKeys = Object.keys(updates)
-            const allowedUpdates = [ "lastPageview", "password" ]
+
+            if (!updateKeys.length) {
+                errMsg = "No updates provided." 
+                throw new Error(errMsg)
+            }
+
+            const allowedUpdates = [ "lastPageview", "password", "loggedIn" ]
             const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
 
             if (updatesCheck.length !== updateKeys.length) {
@@ -83,6 +90,7 @@ class User extends Model {
 
             const fieldsMap = {
                 lastPageview: "last_pageview",
+                loggedIn: "logged_in",
                 password: "password"
             }
 
@@ -92,10 +100,11 @@ class User extends Model {
 
             updateKeys.forEach((update, index) => {
                 const column = fieldsMap[update]
+                const updateValue = updates[update]
                 if (updateKeys.length === (index + 1)) {
-                    updateQuery = updateQuery + `${column} = '${updates[update]}'`
+                    updateQuery = updateQuery + `${column} = '${updateValue}'`
                 } else {
-                    updateQuery = updateQuery + `${column} = '${updates[update]}', `
+                    updateQuery = updateQuery + `${column} = '${updateValue}', `
                 }
             })
 
@@ -108,6 +117,7 @@ class User extends Model {
             }
 
         } catch(err) {
+            console.log(err)
             return {
                 error: errMsg
             }

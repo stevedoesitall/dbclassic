@@ -3,4 +3,8 @@
 :root {
 	--sans-serif-font: "Roboto", sans-serif;
 	--serif-font: "Roboto Slab", serif;
+	--primary: #0047ab;
+	--success: #00ab64;
+	--warning: #ab6f00;
+	--danger: #ab1a00;
 }

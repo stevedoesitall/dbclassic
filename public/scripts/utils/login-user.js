@@ -1,10 +1,61 @@
 const loginBtn = document.querySelector("#login-button")
+const userInput = document.querySelector("#user-name-input")
+const loginMsg = document.querySelector("#login-msg")
+
+const updateLoginMsg = (msg, status) => {
+	loginMsg.textContent = msg
+	loginMsg.classList.add(status)
+
+	if (status === "success") {
+		loginBtn.classList.add("hidden")
+		userInput.classList.add("hidden")
+	}
+}
 
 loginBtn.addEventListener("click", async () => {
-	const userInput = document.querySelector("#user-name-input").value
-	const response = await fetch(`/users/name/${userInput}`)
+	const successMsg = "Success. You are now logged in."
+	let errMsg
+	let userId
+	try {
+		const userGetRes = await fetch(`/users/name/${userInput.value}`)
+		const userData = await userGetRes.json()
+		userId = userData.id
 
-	if (response.status !== 200) {
-		alert("Something went wrong. Please try again.")
+		document.querySelector("#login-container").classList.remove("hidden")
+
+		if (userGetRes.status !== 200) {
+			errMsg = "Invalid Login. Please try again."
+			throw new Error(errMsg)
+		}
+
+		try {
+			const userPutRes = await fetch("/users", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					id: userId,
+					updates: {
+						loggedIn: true
+					}
+				})
+			})
+	
+			if (userPutRes.status !== 200) {
+				errMsg = "Something went wrong. Please try again."
+				throw new Error(errMsg)
+			}
+
+			updateLoginMsg(successMsg, "success")
+		}
+
+		catch(err) {
+			updateLoginMsg(errMsg, "error")
+		}
+
+	} catch(err) {
+		updateLoginMsg(errMsg, "error")
 	}
+
 })

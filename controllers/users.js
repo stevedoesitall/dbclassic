@@ -64,7 +64,6 @@ const usersController = {
 	put: {
 		async updateOne(req, res) {
 			const { id, updates } = req.body
-            
 			const update = await new User().updateOne(id, updates)
 
 			if (update.error) {

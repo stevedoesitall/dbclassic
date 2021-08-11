@@ -5,6 +5,22 @@
 	padding-bottom: 0.7em;
 }
 
+.emphasis {
+	font-weight: bold;
+}
+
+.error {
+	color: var(--danger);
+}
+
+.hidden {
+	display: none;
+}
+
+.success {
+	color: var(--success);
+}
+
 .tweet-block {
 	padding-bottom: 0.5em;
 }

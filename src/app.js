@@ -19,13 +19,13 @@ const port = process.env.PORT || 8083
 const __dirname = path.resolve()
 
 const publicPath = path.join(__dirname, "./public")
-const viewsPath = path.join(__dirname, "./public/views")
+const viewsPath = path.join(__dirname, "./views")
 
 app.engine(".html", exphbs({ 
 	extname: ".html", 	
 	partialsDir: [
-		"./public/views/partials/blocks",
-		"./public/views/partials/ui"
+		"./views/partials/blocks",
+		"./views/partials/ui"
 	] 
 }))
 
@@ -58,16 +58,6 @@ app.use("/tweets", router.tweets)
 app.use("/users", router.users)
 
 app.get("*", async (req, res, next) => {
-	//Update this to a unique cookie for users, also need to add some login functionality
-	const userCookies = req.cookies
-
-	if (!userCookies.momus_id) {
-		// res.cookie("momus_id", "110ec58a-a0f2-4ac4-8393-c866d813b8d1", {
-		// 	"sameSite": "strict",
-		// 	"httpOnly": true
-		// })
-	}
-
 	if (req.session.views) {
 		req.session.views++
 	} else {
@@ -77,23 +67,33 @@ app.get("*", async (req, res, next) => {
 	next()
 })
 
+//NOTE: Update this to login/logut endpoints
 app.get("", async (req, res) => {
 	const { allDates, yearHeaders } = await _.getTweets()
-	
-	let lastPageview
-
 	const userCookies = req.cookies
-	
+
+	let lastPageview
+	let loggedIn
+
 	if (userCookies.momus_id) {
 		const data = await _.getUser(userCookies.momus_id)
 		lastPageview = data.last_pageview ? data.last_pageview : null
+		loggedIn = data.logged_in ? true : false
+
+		if (!loggedIn) {
+			res.clearCookie("momus_id")
+		}
+
+		req.session.loginId = userCookies.momus_id
 	}
 
 	res.render("index", {
-		title: "Dadboner Classic",
+		title: "Momus.io",
 		message: "Really lookin' forward to the weekend, you guys.",
 		dates: allDates,
 		lastPageview: lastPageview,
+		loggedIn: loggedIn,
+		userId: userCookies.momus_id,
 		yearHeaders: yearHeaders
 	})
 })
@@ -122,7 +122,6 @@ app.get("/date/:date", async (req, res) => {
 	const userCookies = req.cookies
 
 	if (userCookies.momus_id) {
-		//Use this to manage user data and recs
 		try {
 			await _.updateUser(userCookies.momus_id, date)
 		} catch (err) {
@@ -155,8 +154,24 @@ app.get("/login", (req, res) => {
 	res.render("login")
 })
 
+app.get("/account/:id", async (req, res) => {
+	if (req.params.id !== req.session.loginId) {
+		return res.render("error", {
+			errMsg: "You don't have permission to access this page."
+		})
+	}
+
+	const data = await _.getUser(req.session.loginId)
+	console.log(data)
+	res.render("account", {
+		userName: data.user_name
+	})
+})
+
 app.get("*", (req, res) => {
-	res.render("error")
+	res.render("error", {
+		errMsg: "Page doesn't exist. Kinda concerning?"
+	})
 })
 
 cron.schedule("1 0 * * *", async () => {
