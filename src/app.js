@@ -77,8 +77,8 @@ app.get("", async (req, res) => {
 
 	if (userCookies.momus_id) {
 		const data = await _.getUser(userCookies.momus_id)
-		lastPageview = data.last_pageview ? data.last_pageview : null
 		loggedIn = data.logged_in ? true : false
+		lastPageview = data.last_pageview && loggedIn ? data.last_pageview : false
 
 		if (!loggedIn) {
 			res.clearCookie("momus_id")

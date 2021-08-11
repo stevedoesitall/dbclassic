@@ -4,7 +4,7 @@ import pkg from "pg"
 dotenv.config()
 
 const { Pool } = pkg
-const enviornment = process.env.NODE_ENV || "development"
+const enviornment = process.env.NODE_ENV
 
 const prodCreds = {
 	host: process.env.DB_HOST,
@@ -18,10 +18,10 @@ const prodCreds = {
 }
 
 const devCreds = {
-	host: "localhost",
-	database: "dbclassic",
-	user: "postgres",
-	password: "admin",
+	host: process.env.DEV_HOST,
+	database: process.env.DEV_NAME,
+	user: process.env.DEV_USER,
+	password: process.env.DEV_PASS,
 	port: 5432
 }
 
@@ -35,15 +35,14 @@ const stagingCreds = {
 
 let credsToUse
 
-//Update this - staging enviornment never being invoked
-if (enviornment === "development") {
-	credsToUse = devCreds
+if (enviornment === "production") {
+	credsToUse = prodCreds
 } else if (enviornment === "staging") {
 	credsToUse = stagingCreds
 } else {
-	credsToUse = prodCreds
+	credsToUse = devCreds
 }
 
 const pool = new Pool(credsToUse)
 
-export { pool, devCreds, prodCreds, stagingCreds }
+export default pool
