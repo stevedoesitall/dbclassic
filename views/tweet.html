@@ -5,12 +5,14 @@
     <p>{{data.text}}</p>
 </div>
 
-{{#if prev}}
-    <p><a href="/tweet/{{prev}}">Previous</a></p>
-{{/if}}
+<div id="footer-links">
+    {{#if prev}}
+        <p><a href="/tweet/{{prev}}">Previous</a></p>
+    {{/if}}
 
-{{#if next}}
-    <p><a href="/tweet/{{next}}">Next</a></p>
-{{/if}}
+    {{#if next}}
+        <p><a href="/tweet/{{next}}">Next</a></p>
+    {{/if}}
+</div>
 
 <meta name="title" content="{{message}}">

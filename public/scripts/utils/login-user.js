@@ -7,7 +7,7 @@ const updateLoginMsg = (msg, status) => {
 	loginMsg.classList.add(status)
 
 	if (status === "success") {
-		loginBtn.classList.add("hidden")
+		document.querySelector("#button-container").classList.add("hidden")
 		userInput.classList.add("hidden")
 	}
 }
