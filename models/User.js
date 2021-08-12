@@ -38,6 +38,7 @@ class User extends Model {
 
     async insertOne(id, userName, password) {
         let errMsg
+
         try {
             const result = await this.fetchOne(id)
 
@@ -69,7 +70,6 @@ class User extends Model {
     }
 
     async updateOne(id, updates) {
-        console.log(updates)
         let errMsg
 
         try {
@@ -117,14 +117,12 @@ class User extends Model {
             }
 
         } catch(err) {
-            console.log(err)
             return {
                 error: errMsg
             }
         } finally {
             console.log(`updateOne completed on ${this.#table} table`)
         }
-
     }
 }
 

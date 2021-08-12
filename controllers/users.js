@@ -14,7 +14,6 @@ const usersController = {
     
 		async byId(req, res) {
 			const id = req.params.id
-    
 			const result = await new User().fetchById(id)
             
 			if (result.error) {
@@ -28,7 +27,6 @@ const usersController = {
 
 		async byName(req, res) {
 			const name = req.params.name
-    
 			const result = await new User().fetchByName(name)
             
 			if (result.error) {

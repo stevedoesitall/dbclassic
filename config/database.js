@@ -4,7 +4,7 @@ import pkg from "pg"
 dotenv.config()
 
 const { Pool } = pkg
-const enviornment = process.env.NODE_ENV
+const enviornment = process.env.NODE_ENV || "development"
 
 const prodCreds = {
 	host: process.env.DB_HOST,
@@ -35,12 +35,12 @@ const stagingCreds = {
 
 let credsToUse
 
-if (enviornment === "production") {
-	credsToUse = prodCreds
+if (enviornment === "development") {
+	credsToUse = devCreds
 } else if (enviornment === "staging") {
 	credsToUse = stagingCreds
 } else {
-	credsToUse = devCreds
+	credsToUse = prodCreds
 }
 
 const pool = new Pool(credsToUse)

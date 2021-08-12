@@ -2,13 +2,15 @@ import fetch from "node-fetch"
 import nodemailer from "nodemailer"
 import Tweet from "../../../models/Tweet.js"
 
+import { mailCreds, twitterCreds } from "../../../config/credentials.js"
+
 const insertTweets = async () => {
 	const USER_ID = "133110529"
 	const MAX_RESULTS = 100
 	const TWEET_FIELDS = "created_at"
 	let message = ""
 
-	const yesterday = new Date(Date.now() - 864e5)
+	const yesterday = new Date(Date.now() - 864e5 * 0)
 	const year = yesterday.getFullYear()
     
 	let month = yesterday.getMonth() + 1
@@ -23,10 +25,9 @@ const insertTweets = async () => {
 	const endTime = `${date}T23:59:59Z`
     
 	try {
-		console.log("GETTING TWEETS")
 		const response = await fetch(`https://api.twitter.com/2/users/${USER_ID}/tweets?max_results=${MAX_RESULTS}&start_time=${startTime}&end_time=${endTime}&tweet.fields=${TWEET_FIELDS}`, {
 			"headers": {
-				"Authorization": process.env.AUTHORIZATION
+				"Authorization": twitterCreds.authorization
 			}
 		})
         
@@ -40,21 +41,25 @@ const insertTweets = async () => {
 		}
 
 		const tweet = new Tweet()
-		const { id, text, created_at: createdAt } = results.data
 
-		const insert = await tweet.insertOne(id, text, createdAt)
+		const data = results.data
 
-		if (insert.error) {
-			message = "Erroring inserting tweet"
-			throw new Error(message)
-		}
+		data.forEach(async item => {
+			const { id, text, created_at: createdAt } = item
+			const insert = await tweet.insertOne(id, text, createdAt)
+
+			if (insert.error) {
+				message = "Erroring inserting tweet"
+				throw new Error(message)
+			}
+		})
 
 		message = `Saved ${resultCount} tweet${resultCount > 1 ? "s" : ""}`
 
 		return message
 
-	} catch (err) {
-		return err
+	} catch(err) {
+		console.log(err)
 
 	} finally {
 		const transporter = nodemailer.createTransport({
@@ -63,8 +68,8 @@ const insertTweets = async () => {
 			secure: false,
 			service: "yahoo",
 			auth: {
-				user: process.env.MAIL_USER,
-				pass: process.env.MAIL_PASS
+				user: mailCreds.userName,
+				pass: mailCreds.password
 			},
 			debug: false,
 			logger: true

@@ -24,7 +24,7 @@ loginBtn.addEventListener("click", async () => {
 		document.querySelector("#login-container").classList.remove("hidden")
 
 		if (userGetRes.status !== 200) {
-			errMsg = "Invalid Login. Please try again."
+			errMsg = "Invalid login. Please try again."
 			throw new Error(errMsg)
 		}
 

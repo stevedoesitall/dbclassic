@@ -7,6 +7,7 @@ router.get("/", tweetsController.get.all)
 router.get("/:id", tweetsController.get.byId)
 router.get("/date/:date", tweetsController.get.byDate)
 
-router.post("/", tweetsController.post.addOne)
+router.post("/one", tweetsController.post.addOne)
+router.post("/many", tweetsController.post.addMany)
 
 export { router as tweetsRouter }

@@ -1,5 +1,6 @@
 import path from "path"
 import cron from "node-cron"
+import dotenv from "dotenv"
 import express from "express"
 import exphbs from "express-handlebars"
 import cookieParser from "cookie-parser"
@@ -8,6 +9,10 @@ import { v4 as uuidv4 } from "uuid"
 
 import router from "../routes/index.js"
 import _ from "./utils/index.js"
+
+dotenv.config({
+	path: ".env"
+})
 
 const app = express()
 
@@ -162,7 +167,7 @@ app.get("/account/:id", async (req, res) => {
 	}
 
 	const data = await _.getUser(req.session.loginId)
-	console.log(data)
+
 	res.render("account", {
 		userName: data.user_name
 	})

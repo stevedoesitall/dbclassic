@@ -6,8 +6,7 @@ const tweetsController = {
 			let results
 	
 			if (req.query.text) {
-				const text = req.query.text.toLowerCase()
-				results = await new Tweet().fetchByText(text)
+				results = await new Tweet().fetchByText(req.query.text)
 			} else {
 				results = await new Tweet().fetchAll()
 			}
@@ -21,7 +20,6 @@ const tweetsController = {
 	
 		async byId(req, res) {
 			const id = req.params.id
-	
 			const result = await new Tweet().fetchOne(id)
 			
 			if (result.error) {
@@ -54,8 +52,20 @@ const tweetsController = {
 	post: {
 		async addOne(req, res) {
 			const { id, text, created_at: createdAt } = req.body
-			const escapedText = text.replaceAll("'", "''")
-			const insert = await new Tweet().insertOne(id, escapedText, createdAt)
+			const insert = await new Tweet().insertOne(id, text, createdAt)
+
+			if (insert.error) {
+				return res.status(404).json({
+					error: insert.error
+				})
+			}
+                
+			return res.status(200).json(insert)
+		},
+
+		async addMany(req, res) {
+			const tweets = req.body.data
+			const insert = await new Tweet().insertMany(tweets)
 
 			if (insert.error) {
 				return res.status(404).json({
