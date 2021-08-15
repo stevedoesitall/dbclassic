@@ -12,6 +12,53 @@ class User extends Model {
         this.#table = modelTable
     }
 
+    async fetchAll() {
+        let errMsg
+
+        try {
+            const query = `SELECT * FROM ${this.#table} ORDER BY created_at ASC;`
+
+            const results = await pool.query(query)
+
+            if (!results.rows.length) {
+                errMsg = "No results found."
+                throw new Error(errMsg)
+            }
+
+            return results.rows
+
+        } catch(err) {
+            console.log(err)
+
+        } finally {
+            console.log(`fetchAll completed on ${this.#table} table`)
+        }
+    }
+
+    async fetchById(id) {
+        let errMsg
+
+        try {
+            const results = await pool.query(`SELECT * FROM ${this.#table} WHERE id = '${id}';`)
+            const result = results.rows[0]
+    
+            if (!result) {
+                errMsg = `ID ${id} does not exist on ${this.#table} table.`
+                throw new Error(errMsg)
+            }
+
+            return result
+
+        } catch(err) {
+            return {
+                error: errMsg
+            }
+
+        } finally {
+            console.log(`fetchById completed on ${this.#table} table`)
+        }
+    }
+
     async fetchByName(name) {
         let errMsg
 
@@ -40,6 +87,12 @@ class User extends Model {
         let errMsg
 
         try {
+
+            if (!id || !userName || password) {
+                errMsg = `Missing all required parameters.`
+                throw new Error(errMsg)
+            }
+
             const result = await this.fetchOne(id)
 
             if (!result.error) {

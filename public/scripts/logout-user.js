@@ -35,5 +35,4 @@ logoutBtn.addEventListener("click", async () => {
 	} catch(err) {
 		updateLoginMsg(errMsg, "error")
 	}
-
 })

@@ -1,3 +1,4 @@
+
 import Tweet from "../models/Tweet.js"
 
 const tweetsController = {
@@ -10,42 +11,57 @@ const tweetsController = {
 			} else {
 				results = await new Tweet().fetchAll()
 			}
-		
+
 			if (!results.length) {
 				return res.status(204).json()
 			}
-		
-			return res.status(200).json(results)
+			return res.status(200).json({
+				results
+			})
 		},
 	
 		async byId(req, res) {
 			const id = req.params.id
-			const result = await new Tweet().fetchOne(id)
+			const data = await new Tweet().fetchById(id)
 			
-			if (result.error) {
-				return res.status(404).json({
-					error: result.error
+			if (data.error) {
+				return res.render("error", {
+					errMsg: data.error
 				})
 			}
-		
-			result.text = result.text.replaceAll("&amp;", "&")
 			
-			return res.status(200).json(result)
+			return res.render("tweet", {
+				data: data.result
+			})
 		},
 	
 		async byDate(req, res) {
 			const date = req.params.date
-			const results = await new Tweet().fetchByDate(date)
-		
-			if (!results) {
-				const errMsg = `No tweet found from this date: ${date}. Kinda concering?`
-		
-				return res.status(404).json({
-					error: errMsg
+			const data = await new Tweet().fetchByDate(date)
+			
+			if (data.error) {		
+				return res.render("error", {
+					errMsg: data.error
 				})
 			}
-		
-			return res.status(200).json(results)
+			return res.render("date", {
+				data: data.rows,
+				prevDate: data.prevDate,
+				nextDate: data.nextDate,
+				date: data.formattedDate
+			})
+		},
+
+		async dates(req, res) {
+			const results = await new Tweet().fetchDates()
+
+			if (results.error) {
+				return res.status(404).json({
+					error: results.error
+				})
+			}
+			
+			return res.status(200).json({ results })
 		}
 	},
 

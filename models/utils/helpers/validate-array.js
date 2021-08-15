@@ -1,4 +1,4 @@
-import Tweet from "../Tweet.js"
+import Tweet from "../../Tweet.js"
 
 const filterArray = async (tweets) => {
     const filteredTweets = []
@@ -9,6 +9,8 @@ const filterArray = async (tweets) => {
 
         if (result.error && id && text && createdAt) {
             filteredTweets.push(tweet)
+        } else if (!result.error) {
+            
         }
     }
 

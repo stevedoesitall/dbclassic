@@ -10,11 +10,11 @@ const formatTime = (tweet) => {
 	formattedTweet.hour = tweetDate.getHours()
 
 	if (formattedTweet.hour > 12) {
-		formattedTweet.hour = formattedTweet.hour - 12
+		formattedTweet.hour = tweet.hour - 12
 	} else if (formattedTweet.hour === 0) {
 		formattedTweet.hour = 12
 	} else if (formattedTweet.hour < 0) {
-		formattedTweet.hour = formattedTweet.hour + 12
+		formattedTweet.hour = tweet.hour + 12
 	}
 
 	formattedTweet.minute = convertDate(tweetDate.getMinutes())

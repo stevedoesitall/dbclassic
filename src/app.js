@@ -59,125 +59,19 @@ if (process.env.NODE_ENV === "production") {
   
 app.use(session(sessionObj))
 
-app.use("/tweets", router.tweets)
-app.use("/users", router.users)
-
 app.get("*", async (req, res, next) => {
 	if (req.session.views) {
 		req.session.views++
 	} else {
 		req.session.views = 1
 	}
-
+	console.log(`Total PVs: ${req.session.views}`)
 	next()
 })
 
-//NOTE: Update this to login/logut endpoints
-app.get("", async (req, res) => {
-	const { allDates, yearHeaders } = await _.getTweets()
-	const userCookies = req.cookies
-
-	let lastPageview
-	let loggedIn
-
-	if (userCookies.momus_id) {
-		const data = await _.getUser(userCookies.momus_id)
-		loggedIn = data.logged_in ? true : false
-		lastPageview = data.last_pageview && loggedIn ? data.last_pageview : false
-
-		if (!loggedIn) {
-			res.clearCookie("momus_id")
-		}
-
-		req.session.loginId = userCookies.momus_id
-	}
-
-	res.render("index", {
-		title: "Momus.io",
-		message: "Really lookin' forward to the weekend, you guys.",
-		dates: allDates,
-		lastPageview: lastPageview,
-		loggedIn: loggedIn,
-		userId: userCookies.momus_id,
-		yearHeaders: yearHeaders
-	})
-})
-
-app.get("/tweet/:id", async (req, res) => {
-	const tweetId = req.params.id
-	const { data, prevTweet, nextTweet } = await _.getTweetById(tweetId)
-	const makeISO = true
-	
-	if (!data) {
-		return res.render("error")
-	}
-	
-	res.render("tweet", {
-		data: data,
-		formattedDateTime: `${_.formatDateStr(data.created_at, makeISO)} @ ${_.formatTime(data)}`,
-		prev: prevTweet,
-		next: nextTweet
-	})
-})
-
-app.get("/date/:date", async (req, res) => {
-	const date = req.params.date
-	const { data, prevDate, nextDate } = await _.getTweetByDate(date)
-
-	const userCookies = req.cookies
-
-	if (userCookies.momus_id) {
-		try {
-			await _.updateUser(userCookies.momus_id, date)
-		} catch (err) {
-			console.log(err)
-		} finally {
-			console.log("Cookie setting finished")
-		}
-	}
-
-	if (!data) {
-		return res.render("error")
-	}
-
-	const formattedDate = _.formatDateStr(date)
-
-	res.render("date", {
-		tweets: data,
-		prev: prevDate,
-		next: nextDate,
-		date: date,
-		formattedDate: formattedDate
-	})
-})
-
-app.get("/search", (req, res) => {
-	res.render("search")
-})
-
-app.get("/login", (req, res) => {
-	res.render("login")
-})
-
-app.get("/account/:id", async (req, res) => {
-	if (req.params.id !== req.session.loginId) {
-		return res.render("error", {
-			errMsg: "You don't have permission to access this page."
-		})
-	}
-
-	const data = await _.getUser(req.session.loginId)
-
-	res.render("account", {
-		userName: data.user_name
-	})
-})
-
-app.get("*", (req, res) => {
-	res.render("error", {
-		errMsg: "Page doesn't exist. Kinda concerning?"
-	})
-})
+app.use("/tweets", router.tweets)
+app.use("/users", router.users)
+app.use("", router.pages)
 
 cron.schedule("1 0 * * *", async () => {
 	await _.insertTweets()

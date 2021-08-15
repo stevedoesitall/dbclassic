@@ -1,18 +1,16 @@
 <div id="main-content">
     <p><a href="/">Home</a></p>
     <h2>Tweet Page</h2>
-    <p><a href="https://twitter.com/DadBoner/status/{{data.id}}">{{formattedDateTime}}</a></p>
+    <p><a href="https://twitter.com/DadBoner/status/{{data.id}}">{{data.date}} @ {{data.time}}</a></p>
     <p>{{data.text}}</p>
 </div>
 
 <div id="footer-links">
-    {{#if prev}}
-        <p><a href="/tweet/{{prev}}">Previous</a></p>
+    {{#if data.prevTweet}}
+        <p><a href="/tweets/{{data.prevTweet}}">Previous</a></p>
     {{/if}}
 
-    {{#if next}}
-        <p><a href="/tweet/{{next}}">Next</a></p>
+    {{#if data.nextTweet}}
+        <p><a href="/tweets/{{data.nextTweet}}">Next</a></p>
     {{/if}}
 </div>
-
-<meta name="title" content="{{message}}">
