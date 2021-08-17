@@ -4,7 +4,7 @@ import pkg from "pg"
 dotenv.config()
 
 const { Pool } = pkg
-const enviornment = process.env.NODE_ENV || "development"
+const enviornment = process.env.NODE_ENV
 
 const prodCreds = {
 	host: process.env.DB_HOST,

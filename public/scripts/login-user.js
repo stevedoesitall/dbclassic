@@ -16,6 +16,7 @@ loginBtn.addEventListener("click", async () => {
 	const successMsg = "Success. You are now logged in."
 	let errMsg
 	let userId
+	
 	try {
 		const userGetRes = await fetch(`/users/name/${userInput.value}`)
 		const userData = await userGetRes.json()

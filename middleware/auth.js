@@ -1,17 +1,20 @@
-import User from "../models/User.js"
+const auth = async (req, res, next) => {
+	const errMsg = "You don't have permission to access this page."
 
-const auth = async (userCookies) => {
-	let lastPageview
-	let loggedIn
+	try {
+		const authorized = (req.params.id === req.session.loginId) && req.cookies.momus_id
 
-	if (userCookies.momus_id) {
-		const user = new User()
-		const data = await user.fetchById(userCookies.momus_id)
-		loggedIn = data.logged_in ? true : false
-		lastPageview = data.last_pageview && loggedIn ? data.last_pageview : false
+		if (!authorized) {
+			throw new Error(errMsg)
+		}
+
+		next()
+
+	} catch (err) {
+		return res.render("error", {
+			errMsg: errMsg
+		})
 	}
-
-	return { lastPageview, loggedIn }
 }
 
 export default auth
