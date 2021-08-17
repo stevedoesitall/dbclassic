@@ -13,6 +13,13 @@
 	display: none;
 }
 
+.sticky {
+	position: -webkit-sticky; /* Safari */
+	position: sticky;
+	text-align: right;
+	top: 0;
+}
+
 .success {
 	color: var(--success);
 }

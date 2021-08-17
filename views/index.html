@@ -31,7 +31,10 @@
 </div>
 
 <div id="date-list">
-    <h3>Tweets by Day</h3>
+    <div id="back-to-top-button" class="sticky hidden">
+        <p><a href="#tweets-by-day">Back to Top</a></p>
+    </div>
+    <h3 id="tweets-by-day">Tweets by Day</h3>
     <ul>
         {{#each allDates}}
             <li id="day-{{this.date}}" class="date-item"><a href="/tweets/date/{{this.date}}">{{this.date}}</a></li>
