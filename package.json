@@ -1,85 +1,86 @@
 {
-  "name": "dbc-new",
-  "version": "1.0.0",
-  "main": "src/app",
-  "engines": {
-    "node": "16.x"
-  },
-  "type": "module",
-  "scripts": {
-    "build": "",
-    "dev": "nodemon src/app.js",
-    "git": "git init && git status && git add . && git commit -m 'Committing' && git push",
-    "start": "node src/app.js",
-    "test": "mocha --recursive"
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "es2021": true,
-      "node": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 12,
-      "sourceType": "module"
-    },
-    "rules": {
-      "indent": [
-        "error",
-        "tab"
-      ],
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "double"
-      ],
-      "semi": [
-        "error",
-        "never"
-      ],
-      "no-unused-vars": "off",
-      "require-await": "off"
-    }
-  },
-  "eslintIgnore": [
-    "/test",
-    "/node_modules",
-    "/dist",
-    "/sandbox",
-    "/models"
-  ],
-  "prettier": {
-    "trailingComma": "none",
-    "useTabs": true,
-    "semi": false,
-    "singleQuote": false,
-    "quoteProps": "as-needed",
-    "bracketSpacing": true
-  },
-  "author": "Steve Giordano",
-  "license": "ISC",
-  "description": "Fullstack app for the Dadboner Twitter account.",
-  "dependencies": {
-    "connect-redis": "^6.0.0",
-    "cookie-parser": "^1.4.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^5.3.2",
-    "express-session": "^1.17.2",
-    "node-cron": "^3.0.0",
-    "node-fetch": "^2.6.1",
-    "nodemailer": "^6.6.3",
-    "pg": "^8.7.1",
-    "redis": "^3.1.2",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "eslint": "^7.31.0",
-    "mocha": "^9.0.3",
-    "prettier": "^2.3.2"
-  }
+	"name": "dbc-new",
+	"version": "1.0.0",
+	"main": "src/app",
+	"engines": {
+		"node": "16.x"
+	},
+	"type": "module",
+	"scripts": {
+		"build": "",
+		"dev": "nodemon src/app.js",
+		"git": "git init && git status && git add . && git commit -m 'Committing' && git push",
+		"start": "node src/app.js",
+		"test": "mocha --recursive",
+    "format": "npx prettier --write ."
+	},
+	"eslintConfig": {
+		"env": {
+			"browser": true,
+			"es2021": true,
+			"node": true
+		},
+		"extends": "eslint:recommended",
+		"parserOptions": {
+			"ecmaVersion": 12,
+			"sourceType": "module"
+		},
+		"rules": {
+			"indent": [
+				"error",
+				"tab"
+			],
+			"linebreak-style": [
+				"error",
+				"unix"
+			],
+			"quotes": [
+				"error",
+				"double"
+			],
+			"semi": [
+				"error",
+				"never"
+			],
+			"no-unused-vars": 1,
+			"require-await": "off"
+		}
+	},
+	"eslintIgnore": [
+		"/test",
+		"/node_modules",
+		"/dist",
+		"/sandbox",
+		"/models"
+	],
+	"prettier": {
+		"trailingComma": "none",
+		"useTabs": true,
+		"semi": false,
+		"singleQuote": false,
+		"quoteProps": "as-needed",
+		"bracketSpacing": true
+	},
+	"author": "Steve Giordano",
+	"license": "ISC",
+	"description": "Fullstack app for the Dadboner Twitter account.",
+	"dependencies": {
+		"connect-redis": "^6.0.0",
+		"cookie-parser": "^1.4.5",
+		"dotenv": "^10.0.0",
+		"express": "^4.17.1",
+		"express-handlebars": "^5.3.2",
+		"express-session": "^1.17.2",
+		"node-cron": "^3.0.0",
+		"node-fetch": "^2.6.1",
+		"nodemailer": "^6.6.3",
+		"pg": "^8.7.1",
+		"redis": "^3.1.2",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"eslint": "^7.31.0",
+		"mocha": "^9.0.3",
+		"prettier": "^2.3.2"
+	}
 }

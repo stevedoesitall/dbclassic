@@ -8,7 +8,7 @@ const updateLoginMsg = (msg, status) => {
 
 logoutBtn.addEventListener("click", async () => {
 	let errMsg
-    
+
 	try {
 		const userId = location.pathname.substring(9)
 		console.log(userId)
@@ -26,13 +26,13 @@ logoutBtn.addEventListener("click", async () => {
 		})
 
 		if (userPutRes.status !== 200) {
-			errMsg = "Something went wrong when trying to log out; please try again later."
+			errMsg =
+				"Something went wrong when trying to log out; please try again later."
 			throw new Error(errMsg)
 		}
 
 		location.href = "/"
-
-	} catch(err) {
+	} catch (err) {
 		updateLoginMsg(errMsg, "error")
 	}
 })

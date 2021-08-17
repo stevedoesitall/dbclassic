@@ -5,10 +5,11 @@ const pagesController = {
 	async renderHome(req, res) {
 		const tweet = new Tweet()
 		const userCookies = req.cookies
-
+		const data = await tweet.fetchDates()
+		
 		const { lastPageview, loggedIn } = req.session
-		const { allDates, yearHeaders } = await tweet.fetchDates()
-        
+		const { allDates, yearHeaders } = data.results
+
 		res.render("index", {
 			message: "Really lookin' forward to the weekend, you guys.",
 			lastPageview,
@@ -22,9 +23,11 @@ const pagesController = {
 	async renderAccount(req, res) {
 		const user = new User()
 		const data = await user.fetchById(req.session.loginId)
-    
+		
+		const { result } = data
+
 		res.render("account", {
-			userName: data.user_name
+			userName: result.user_name
 		})
 	},
 

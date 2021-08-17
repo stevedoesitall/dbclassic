@@ -12,7 +12,7 @@ const prodCreds = {
 	user: process.env.DB_USER,
 	password: process.env.DB_PASS,
 	port: 5432,
-	ssl: { 
+	ssl: {
 		rejectUnauthorized: false
 	}
 }

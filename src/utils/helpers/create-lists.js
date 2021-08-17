@@ -55,14 +55,13 @@ class DoublyLinkedList {
 }
 
 const getTweets = async () => {
-
 	const allDates = []
 	const tweetList = new DoublyLinkedList()
 	const dateList = new DoublyLinkedList()
 
 	const results = await new Tweet().fetchAll()
 
-	results.forEach(tweet => {
+	results.forEach((tweet) => {
 		const tweetDate = formatDateISO(tweet.date)
 
 		if (!allDates.includes(tweetDate)) {
@@ -73,11 +72,11 @@ const getTweets = async () => {
 		tweetList.push(tweet.id)
 	})
 
-	const uniqueYears = [...new Set(allDates.map(date => date.substring(0, 4)))]
+	const uniqueYears = [...new Set(allDates.map((date) => date.substring(0, 4)))]
 	const yearHeaders = []
 
-	uniqueYears.forEach(year => {
-		const firstDay = allDates.find(day => day.substring(0, 4) === year)
+	uniqueYears.forEach((year) => {
+		const firstDay = allDates.find((day) => day.substring(0, 4) === year)
 		yearHeaders.push({
 			year,
 			firstDay
@@ -85,7 +84,6 @@ const getTweets = async () => {
 	})
 
 	return { allDates, tweetList, dateList, yearHeaders }
-
 }
 
 export default getTweets

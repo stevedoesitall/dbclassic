@@ -9,7 +9,7 @@ const updateUser = async (userId, date) => {
 	const updates = {
 		lastPageview: date
 	}
-	
+
 	return await user.updateOne(userId, updates)
 }
 

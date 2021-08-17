@@ -1,63 +1,62 @@
 import Tweet from "../../Tweet.js"
 
 const filterTweetsArray = async (tweets) => {
-    const filteredTweets = []
+	const filteredTweets = []
 
-    for (let tweet of tweets) {
-        const { id, text, created_at: createdAt } = tweet
-        const result = await new Tweet().fetchById(id)
+	for (let tweet of tweets) {
+		const { id, text, created_at: createdAt } = tweet
+		const result = await new Tweet().fetchById(id)
 
-        if (result.error && id && text && createdAt) {
-            filteredTweets.push(tweet)
-        } else if (!result.error) {
-            
-        }
-    }
+		if (result.error && id && text && createdAt) {
+			filteredTweets.push(tweet)
+		} else if (!result.error) {
+		}
+	}
 
-    return filteredTweets
+	return filteredTweets
 }
 
 const insertManyTweetsQB = async (filteredTweets) => {
-    const valuesArr = []
-    let valuesStr = ""
+	const valuesArr = []
+	let valuesStr = ""
 
-    filteredTweets.forEach(tweet => {
-        const { id, text, created_at: createdAt } = tweet
-        valuesArr.push(`('${id}', '${text.replaceAll("'", "''")}', '${createdAt}')`)
-    })
+	filteredTweets.forEach((tweet) => {
+		const { id, text, created_at: createdAt } = tweet
+		valuesArr.push(`('${id}', '${text.replaceAll("'", "''")}', '${createdAt}')`)
+	})
 
-    valuesArr.forEach((value, index) => {
-        const comma = index + 1 < valuesArr.length ? "," : ""
-        valuesStr = valuesStr + value + comma
-    })
+	valuesArr.forEach((value, index) => {
+		const comma = index + 1 < valuesArr.length ? "," : ""
+		valuesStr = valuesStr + value + comma
+	})
 
-    return valuesStr
+	return valuesStr
 }
 
 const updateOneUserQB = (updates, updateKeys, id, table) => {
-    const fieldsMap = {
-        lastPageview: "last_pageview",
-        loggedIn: "logged_in",
-        password: "password"
-    }
+	const fieldsMap = {
+		lastPageview: "last_pageview",
+		loggedIn: "logged_in",
+		password: "password"
+	}
 
-    const lastUpdateDate = new Date().toISOString()
+	const lastUpdateDate = new Date().toISOString()
 
-    let updateQuery = `UPDATE ${table} SET last_update_date = '${lastUpdateDate}', `
+	let updateQuery = `UPDATE ${table} SET last_update_date = '${lastUpdateDate}', `
 
-    updateKeys.forEach((update, index) => {
-        const column = fieldsMap[update]
-        const updateValue = updates[update]
-        if (updateKeys.length === (index + 1)) {
-            updateQuery = updateQuery + `${column} = '${updateValue}'`
-        } else {
-            updateQuery = updateQuery + `${column} = '${updateValue}', `
-        }
-    })
+	updateKeys.forEach((update, index) => {
+		const column = fieldsMap[update]
+		const updateValue = updates[update]
+		if (updateKeys.length === index + 1) {
+			updateQuery = updateQuery + `${column} = '${updateValue}'`
+		} else {
+			updateQuery = updateQuery + `${column} = '${updateValue}', `
+		}
+	})
 
-    updateQuery = updateQuery + ` WHERE id = '${id}'`
+	updateQuery = updateQuery + ` WHERE id = '${id}'`
 
-    return updateQuery
+	return updateQuery
 }
 
 export { filterTweetsArray, insertManyTweetsQB, updateOneUserQB }

@@ -16,11 +16,11 @@ loginBtn.addEventListener("click", async () => {
 	const successMsg = "Success. You are now logged in."
 	let errMsg
 	let userId
-	
+
 	try {
 		const userGetRes = await fetch(`/users/name/${userInput.value}`)
 		const userData = await userGetRes.json()
-		userId = userData.id
+		userId = userData.result.id
 
 		document.querySelector("#login-container").classList.remove("hidden")
 
@@ -42,21 +42,17 @@ loginBtn.addEventListener("click", async () => {
 					}
 				})
 			})
-	
+
 			if (userPutRes.status !== 200) {
 				errMsg = "Something went wrong. Please try again."
 				throw new Error(errMsg)
 			}
 
 			updateLoginMsg(successMsg, "success")
-		}
-
-		catch(err) {
+		} catch (err) {
 			updateLoginMsg(errMsg, "error")
 		}
-
-	} catch(err) {
+	} catch (err) {
 		updateLoginMsg(errMsg, "error")
 	}
-
 })

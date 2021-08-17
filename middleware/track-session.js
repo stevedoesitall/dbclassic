@@ -5,7 +5,7 @@ const trackSession = (req, res, next) => {
 		req.session.views = 1
 	}
 	console.log(`Total PVs: ${req.session.views}`)
-    
+
 	next()
 }
 

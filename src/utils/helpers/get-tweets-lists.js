@@ -4,15 +4,18 @@ import { formatTime } from "./format-date-time.js"
 
 const tweet = new Tweet()
 const getTweetById = async (tweetId) => {
-
 	const { tweetList } = await getTweets()
 	const data = await tweet.fetchById(tweetId)
 	if (data.error) {
 		return true
 	}
-    
-	const prevTweet = tweetList.get(tweetId).prev ? tweetList.get(tweetId).prev.val : null
-	const nextTweet = tweetList.get(tweetId).next ? tweetList.get(tweetId).next.val : null
+
+	const prevTweet = tweetList.get(tweetId).prev
+		? tweetList.get(tweetId).prev.val
+		: null
+	const nextTweet = tweetList.get(tweetId).next
+		? tweetList.get(tweetId).next.val
+		: null
 
 	return { data, prevTweet, nextTweet }
 }
@@ -20,12 +23,12 @@ const getTweetById = async (tweetId) => {
 const getTweetByDate = async (date) => {
 	const { dateList } = await getTweets()
 	const data = await tweet.fetchByDate(date)
-
+	
 	if (!data.length) {
 		return true
 	}
 
-	data.map(tweet => {
+	data.map((tweet) => {
 		tweet.formattedTime = formatTime(tweet)
 	})
 
@@ -34,6 +37,5 @@ const getTweetByDate = async (date) => {
 
 	return { data, prevDate, nextDate }
 }
-
 
 export { getTweetById, getTweetByDate }

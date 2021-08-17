@@ -1,4 +1,4 @@
-const convertDate = (num) => num < 10 ? "0" + num : num
+const convertDate = (num) => (num < 10 ? "0" + num : num)
 
 const formatTime = (tweet) => {
 	const FIVE_HOURS = 18_000_000
@@ -20,7 +20,7 @@ const formatTime = (tweet) => {
 	formattedTweet.minute = convertDate(tweetDate.getMinutes())
 	formattedTweet.seconds = convertDate(tweetDate.getSeconds())
 	formattedTweet.formattedTime = `${formattedTweet.hour}:${formattedTweet.minute}:${formattedTweet.seconds} ${formattedTweet.marker}`
-    
+
 	return formattedTweet.formattedTime
 }
 
@@ -30,7 +30,10 @@ const formatDateISO = (date) => {
 	const tweetMonth = convertDate(tweetDate.getMonth() + 1)
 	const tweetDay = convertDate(tweetDate.getDate())
 
-	const tweetDateSubString = `${tweetYear}-${tweetMonth}-${tweetDay}`.substring(0, 10)
+	const tweetDateSubString = `${tweetYear}-${tweetMonth}-${tweetDay}`.substring(
+		0,
+		10
+	)
 
 	return tweetDateSubString
 }

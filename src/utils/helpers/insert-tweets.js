@@ -12,25 +12,28 @@ const insertTweets = async () => {
 
 	const yesterday = new Date(Date.now() - 864e5 * 0)
 	const year = yesterday.getFullYear()
-    
+
 	let month = yesterday.getMonth() + 1
 	month = month < 10 ? "0" + month : month
-    
+
 	let day = yesterday.getDate()
 	day = day < 10 ? "0" + day : day
-    
+
 	const date = `${year}-${month}-${day}`
-    
+
 	const startTime = `${date}T12:00:00Z`
 	const endTime = `${date}T23:59:59Z`
-    
+
 	try {
-		const response = await fetch(`https://api.twitter.com/2/users/${USER_ID}/tweets?max_results=${MAX_RESULTS}&start_time=${startTime}&end_time=${endTime}&tweet.fields=${TWEET_FIELDS}`, {
-			"headers": {
-				"Authorization": twitterCreds.authorization
+		const response = await fetch(
+			`https://api.twitter.com/2/users/${USER_ID}/tweets?max_results=${MAX_RESULTS}&start_time=${startTime}&end_time=${endTime}&tweet.fields=${TWEET_FIELDS}`,
+			{
+				headers: {
+					Authorization: twitterCreds.authorization
+				}
 			}
-		})
-        
+		)
+
 		const results = await response.json()
 
 		const resultCount = results.meta.result_count
@@ -44,7 +47,7 @@ const insertTweets = async () => {
 
 		const data = results.data
 
-		data.forEach(async item => {
+		data.forEach(async (item) => {
 			const { id, text, created_at: createdAt } = item
 			const insert = await tweet.insertOne(id, text, createdAt)
 
@@ -57,10 +60,8 @@ const insertTweets = async () => {
 		message = `Saved ${resultCount} tweet${resultCount > 1 ? "s" : ""}`
 
 		return message
-
-	} catch(err) {
+	} catch (err) {
 		console.log(err)
-
 	} finally {
 		const transporter = nodemailer.createTransport({
 			host: "smtp.mail.yahoo.com",
@@ -74,7 +75,7 @@ const insertTweets = async () => {
 			debug: false,
 			logger: true
 		})
-        
+
 		const mailOptions = {
 			from: "plex.requester@yahoo.com",
 			to: "steve@momus.io",

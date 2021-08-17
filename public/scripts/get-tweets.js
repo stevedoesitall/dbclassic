@@ -2,16 +2,17 @@ const searchBtn = document.querySelector("#search")
 const tweetsContainer = document.querySelector("#tweets-list")
 
 const getTweets = async (searchTerm) => {
-	//NOTE: Add try/catch/finally
+
 	tweetsContainer.innerHTML = ""
 	const response = await fetch(`/tweets?text=${searchTerm}`)
 
 	if (response.status === 204) {
 		console.log("No tweets.")
-		return document.querySelector("#total-tweets").textContent = "No"
+		return (document.querySelector("#total-tweets").textContent = "No")
 	}
 
 	const data = await response.json()
+	console.log(data)
 	const tweets = data.results
 
 	console.log(`${tweets.length} tweets found.`)
@@ -20,7 +21,7 @@ const getTweets = async (searchTerm) => {
 
 	let text = ""
 
-	tweets.forEach(tweet => {
+	tweets.forEach((tweet) => {
 		const url = `<li><a href="/tweet/${tweet.id}">${tweet.text}</a></li>`
 		text = text + url
 	})

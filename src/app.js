@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import express from "express"
 import exphbs from "express-handlebars"
 import cookieParser from "cookie-parser"
-import session  from "express-session"
+import session from "express-session"
 
 import sessionObj from "../config/session.js"
 import router from "../routes/index.js"
@@ -27,24 +27,24 @@ const __dirname = path.resolve()
 const publicPath = path.join(__dirname, "./public")
 const viewsPath = path.join(__dirname, "./views")
 
-app.engine(".html", exphbs({ 
-	extname: ".html", 	
-	partialsDir: [
-		"./views/partials/blocks",
-		"./views/partials/ui"
-	] 
-}))
+app.engine(
+	".html",
+	exphbs({
+		extname: ".html",
+		partialsDir: ["./views/partials/blocks", "./views/partials/ui"]
+	})
+)
 
 app.set("view engine", ".html")
 app.set("views", viewsPath)
 
 app.use(express.static(publicPath))
-  
+
 if (process.env.NODE_ENV === "production") {
 	app.set("trust proxy", 1)
 	sessionObj.cookie.secure = true
 }
-  
+
 app.use(session(sessionObj))
 
 app.get("*", trackSession, (req, res, next) => next())

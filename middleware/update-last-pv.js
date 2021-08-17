@@ -10,7 +10,7 @@ const updateLastPageview = async (req, res, next) => {
 			const updates = {
 				lastPageview: date
 			}
-			
+
 			await user.updateOne(userCookies.momus_id, updates)
 		} catch (err) {
 			console.log(err)

@@ -54,8 +54,8 @@ class DoublyLinkedList {
 	}
 
 	createList(arr) {
-		arr.forEach(el => {
-			this.push(el)	
+		arr.forEach((el) => {
+			this.push(el)
 		})
 
 		return this

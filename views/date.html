@@ -1,22 +1,16 @@
 <div id="main-content">
-    <p><a href="/">Home</a></p>
-    <h2>Tweets from {{date}}</h2>
+	<p><a href="/">Home</a></p>
+	<h2>Tweets from {{date}}</h2>
 </div>
 
-<div id="date-list">
-    {{#each data}}
-        {{>tweet-block}}
-    {{/each}}
-</div>
+<div id="date-list">{{#each data}} {{>tweet-block}} {{/each}}</div>
 
 <div id="date-links">
-    {{#if prevDate}}
-        <p><a href="/tweets/date/{{prevDate}}">Previous ({{prevDate}})</a></p>
-    {{/if}}
-
-    {{#if nextDate}}
-        <p><a href="/tweets/date/{{nextDate}}">Next ({{nextDate}})</a></p>
-    {{/if}}
+	{{#if prevDate}}
+	<p><a href="/tweets/date/{{prevDate}}">Previous ({{prevDate}})</a></p>
+	{{/if}} {{#if nextDate}}
+	<p><a href="/tweets/date/{{nextDate}}">Next ({{nextDate}})</a></p>
+	{{/if}}
 </div>
 
-<meta name="title" content="Tweets from {{date}}">
+<meta name="title" content="Tweets from {{date}}" />

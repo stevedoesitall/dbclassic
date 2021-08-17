@@ -1,16 +1,17 @@
-
 import Tweet from "../models/Tweet.js"
 
 const tweetsController = {
 	get: {
 		async all(req, res) {
-			let results
-	
+			let data
+
 			if (req.query.text) {
-				results = await new Tweet().fetchByText(req.query.text)
+				data = await new Tweet().fetchByText(req.query.text)
 			} else {
-				results = await new Tweet().fetchAll()
+				data = await new Tweet().fetchAll()
 			}
+
+			const results = data.results
 
 			if (!results.length) {
 				return res.status(204).json()
@@ -19,36 +20,37 @@ const tweetsController = {
 				results
 			})
 		},
-	
+
 		async byId(req, res) {
 			const id = req.params.id
 			const data = await new Tweet().fetchById(id)
-			
+
 			if (data.error) {
 				return res.render("error", {
 					errMsg: data.error
 				})
 			}
-			
+
 			return res.render("tweet", {
 				data: data.result
 			})
 		},
-	
+
 		async byDate(req, res) {
 			const date = req.params.date
 			const data = await new Tweet().fetchByDate(date)
-			
-			if (data.error) {		
+			const { rows, prevDate, nextDate, formattedDate } = data.results
+
+			if (data.error) {
 				return res.render("error", {
 					errMsg: data.error
 				})
 			}
 			return res.render("date", {
-				data: data.rows,
-				prevDate: data.prevDate,
-				nextDate: data.nextDate,
-				date: data.formattedDate
+				data: rows,
+				prevDate: prevDate,
+				nextDate: nextDate,
+				date: formattedDate
 			})
 		},
 
@@ -60,7 +62,7 @@ const tweetsController = {
 					error: results.error
 				})
 			}
-			
+
 			return res.status(200).json({ results })
 		}
 	},
@@ -75,7 +77,7 @@ const tweetsController = {
 					error: insert.error
 				})
 			}
-                
+
 			return res.status(200).json(insert)
 		},
 
@@ -88,7 +90,7 @@ const tweetsController = {
 					error: insert.error
 				})
 			}
-                
+
 			return res.status(200).json(insert)
 		}
 	},
@@ -97,7 +99,7 @@ const tweetsController = {
 		//TBD
 	},
 
-	delete: { 
+	delete: {
 		//TBD
 	}
 }
