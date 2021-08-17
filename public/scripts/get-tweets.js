@@ -22,7 +22,7 @@ const getTweets = async (searchTerm) => {
 	let text = ""
 
 	tweets.forEach((tweet) => {
-		const url = `<li><a href="/tweet/${tweet.id}">${tweet.text}</a></li>`
+		const url = `<li><a href="/tweets/${tweet.id}">${tweet.text}</a></li>`
 		text = text + url
 	})
 
