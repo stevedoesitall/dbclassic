@@ -1,6 +1,7 @@
 
 import Model from "./Model.js"
 import pool from "../config/database.js"
+import _ from "./utils/index.js"
 
 const modelTable = "users"
 
@@ -141,27 +142,7 @@ class User extends Model {
                 throw new Error(errMsg)
             }
 
-            const fieldsMap = {
-                lastPageview: "last_pageview",
-                loggedIn: "logged_in",
-                password: "password"
-            }
-
-            const lastUpdateDate = new Date().toISOString()
-
-            let updateQuery = `UPDATE ${this.#table} SET last_update_date = '${lastUpdateDate}', `
-
-            updateKeys.forEach((update, index) => {
-                const column = fieldsMap[update]
-                const updateValue = updates[update]
-                if (updateKeys.length === (index + 1)) {
-                    updateQuery = updateQuery + `${column} = '${updateValue}'`
-                } else {
-                    updateQuery = updateQuery + `${column} = '${updateValue}', `
-                }
-            })
-
-            updateQuery = updateQuery + ` WHERE id = '${id}'`
+            const updateQuery = _.updateOneUserQB(updates, updateKeys, id, this.#table)
 
             await pool.query(updateQuery)
 

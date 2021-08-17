@@ -243,14 +243,14 @@ class Tweet extends Model {
                 throw new Error(errMsg)
             }
 
-            const filteredTweets = await _.filterArray(tweets)
+            const filteredTweets = await _.insertManyTweetsQB(tweets)
 
             if (!filteredTweets.length) {
                 errMsg = "All tweets were duplicate."
                 throw new Error(errMsg)
             }
 
-            const values = await _.buildQuery(filteredTweets)
+            const values = await _.insertManyTweets(filteredTweets)
 
             const insert = await pool.query(`
                 INSERT INTO ${this.#table} (id, text, created_at)
