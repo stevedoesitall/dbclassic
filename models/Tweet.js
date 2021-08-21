@@ -35,7 +35,6 @@ class Tweet extends Model {
 				throw new Error(errMsg)
 			}
 
-			const tweetId = id.toString()
 			const cachedTweets = await client.get("tweetList")
 			let allTweets
 

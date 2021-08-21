@@ -4,7 +4,9 @@ const trackSession = (req, res, next) => {
 	} else {
 		req.session.views = 1
 	}
-	console.log(`Total PVs: ${req.session.views}`)
+	console.log(`
+	Session Data: ${req.session}
+	Total PVs: ${req.session.views}`)
 
 	next()
 }

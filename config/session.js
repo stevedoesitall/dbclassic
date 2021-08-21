@@ -5,6 +5,7 @@ import connectRedis from "connect-redis"
 import { v4 as uuidv4 } from "uuid"
 
 dotenv.config()
+
 const RedisStore = connectRedis(session)
 const client = redis.createClient(process.env.REDIS_URL)
 
