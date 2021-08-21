@@ -1,11 +1,17 @@
+import util from "util"
+import dotenv from "dotenv"
+import redis from "redis"
 import Model from "./Model.js"
-import DoublyLinkedList from "./DoublyLinkedList.js"
 import pool from "../config/database.js"
 import _ from "./utils/index.js"
 
-const modelTable = "tweets"
+dotenv.config()
 
-//NOTE: Move storage of DLLs over to Redis once implemented
+const modelTable = "tweets"
+const client = redis.createClient(process.env.REDIS_URL)
+const THIRTY_MINUTES = 1800
+
+client.get = util.promisify(client.get)
 
 class Tweet extends Model {
 	#table
@@ -30,34 +36,32 @@ class Tweet extends Model {
 			}
 
 			const tweetId = id.toString()
+			const cachedTweets = await client.get("tweetList")
+			let allTweets
 
-			const { results: allTweets } = await this.fetchAll()
+			if (cachedTweets) {
+				console.log("GETTING FROM REDIS")
+				allTweets = await JSON.parse(cachedTweets)
+			} else {
+				const response = await this.fetchAll()
+				allTweets = response.results
+				console.log("GETTING FROM PG")
+				client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
+			}
 
-			const tweetList = new DoublyLinkedList()
-			const tweetIds = []
-
-			allTweets.forEach((tweet) => {
-				tweetIds.push(tweet.id)
-			})
-
-			const linkedTweets = tweetList.createList(tweetIds)
-			const prevTweet = linkedTweets.get(tweetId).prev
-				? linkedTweets.get(tweetId).prev.val
-				: null
-			const nextTweet = linkedTweets.get(tweetId).next
-				? linkedTweets.get(tweetId).next.val
-				: null
+			const linkedTweets = _.getLinkedTweets(allTweets, "id", id)
 
 			result.text = result.text.replaceAll("&amp;", "&")
 			result.date = _.formatDateStr(result.created_at)
 			result.time = _.formatTime(result.created_at)
-			result.prevTweet = prevTweet ? prevTweet : null
-			result.nextTweet = nextTweet ? nextTweet : null
+			result.prevTweet = linkedTweets.prev
+			result.nextTweet = linkedTweets.next
 
 			return {
 				ok: true,
 				result
 			}
+
 		} catch (err) {
 			return {
 				error: errMsg
@@ -71,17 +75,14 @@ class Tweet extends Model {
 		let errMsg
 
 		try {
-			const query = `SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM ${
+			const results = await pool.query(`SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM ${
 				this.#table
-			} ORDER BY created_at ASC;`
-
-			const results = await pool.query(query)
+			} ORDER BY created_at ASC;`)
 
 			if (!results.rows.length) {
 				errMsg = "No results found."
 				throw new Error(errMsg)
 			}
-
 
 			return {
 				ok: true,
@@ -102,10 +103,13 @@ class Tweet extends Model {
 		let errMsg
 
 		try {
+			//Cache with Redis
+			const formattedDate = _.formatDateStr(date)
+			// const cachedTweetsByDate = await client.get(formattedDate)
+			// let results
+
 			const results = await pool.query(
-				`SELECT * FROM ${
-					this.#table
-				} WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at ASC;`
+				`SELECT * FROM ${this.#table} WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at ASC;`
 			)
 
 			if (!results.rows.length) {
@@ -113,37 +117,30 @@ class Tweet extends Model {
 				throw new Error(errMsg)
 			}
 
-			const data = await this.fetchAll()
+			const cachedTweetsAll = await client.get("tweetList")
+			let allTweets
 
-			if (!data.ok) {
-				errMsg = "Error fetching all."
-				throw new Error(errMsg)
+			if (cachedTweetsAll) {
+				console.log("GETTING FROM REDIS")
+				allTweets = await JSON.parse(cachedTweetsAll)
+			} else {
+				console.log("GETTING FROM PG")
+				const response = await this.fetchAll()
+
+				if (!response.ok) {
+					errMsg = "Error fetching all."
+					throw new Error(errMsg)
+				}
+
+				allTweets = response.results
+				client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
 			}
 
-			const allTweets = data.results
-	
-			const tweetList = new DoublyLinkedList()
-			const tweetDates = []
+			const linkedDates = _.getLinkedTweets(allTweets, "date", date)
 
-			allTweets.forEach((tweet) => {
-				const tweetDate = _.formatDateISO(tweet.date)
-				if (!tweetDates.includes(tweetDate)) {
-					tweetDates.push(tweetDate)
-				}
-			})
-
-			const linkedDates = tweetList.createList(tweetDates)
-
-			const prevDate = linkedDates.get(date).prev
-				? linkedDates.get(date).prev.val
-				: null
-			const nextDate = linkedDates.get(date).next
-				? linkedDates.get(date).next.val
-				: null
-
-			results.formattedDate = _.formatDateStr(date)
-			results.prevDate = prevDate
-			results.nextDate = nextDate
+			results.formattedDate = formattedDate
+			results.prevDate = linkedDates.prev
+			results.nextDate = linkedDates.next
 
 			results.rows.map((row) => {
 				row.text = row.text.replaceAll("&amp;", "&")
@@ -218,9 +215,7 @@ class Tweet extends Model {
 
 		try {
 			const results = await pool.query(
-				`SELECT * FROM ${
-					this.#table
-				} WHERE text ILIKE '%${textLower}%' ORDER BY created_at ASC;`
+				`SELECT * FROM ${this.#table} WHERE text ILIKE '%${textLower}%' ORDER BY created_at ASC;`
 			)
 
 			if (!results.rows.length) {

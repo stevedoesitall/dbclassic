@@ -5,6 +5,7 @@ const loginMsg = document.querySelector("#login-msg")
 const updateLoginMsg = (msg, status) => {
 	loginMsg.textContent = msg
 	loginMsg.classList.add(status)
+	document.querySelector("#login-container").classList.remove("hidden")
 
 	if (status === "success") {
 		document.querySelector("#button-container").classList.add("hidden")
@@ -19,15 +20,14 @@ loginBtn.addEventListener("click", async () => {
 
 	try {
 		const userGetRes = await fetch(`/users/name/${userInput.value}`)
-		const userData = await userGetRes.json()
-		userId = userData.result.id
-
-		document.querySelector("#login-container").classList.remove("hidden")
 
 		if (userGetRes.status !== 200) {
 			errMsg = "Invalid login. Please try again."
 			throw new Error(errMsg)
 		}
+	
+		const userData = await userGetRes.json()
+		userId = userData.result.id
 
 		try {
 			const userPutRes = await fetch("/users", {
@@ -50,9 +50,11 @@ loginBtn.addEventListener("click", async () => {
 
 			updateLoginMsg(successMsg, "success")
 		} catch (err) {
+			console.log("Throwing error", errMsg)
 			updateLoginMsg(errMsg, "error")
 		}
 	} catch (err) {
+		console.log("Throwing error", errMsg)
 		updateLoginMsg(errMsg, "error")
 	}
 })

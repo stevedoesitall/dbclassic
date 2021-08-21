@@ -12,7 +12,7 @@
 		"git": "git init && git status && git add . && git commit -m 'Committing' && git push",
 		"start": "node src/app.js",
 		"test": "mocha --recursive",
-    "format": "npx prettier --write ."
+		"format": "npx prettier --write ."
 	},
 	"eslintConfig": {
 		"env": {

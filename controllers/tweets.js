@@ -3,6 +3,7 @@ import Tweet from "../models/Tweet.js"
 const tweetsController = {
 	get: {
 		async all(req, res) {
+			console.log("GETTING ALL")
 			let data
 
 			if (req.query.text) {
@@ -22,9 +23,10 @@ const tweetsController = {
 		},
 
 		async byId(req, res) {
+
 			const id = req.params.id
 			const data = await new Tweet().fetchById(id)
-
+			
 			if (data.error) {
 				return res.render("error", {
 					errMsg: data.error

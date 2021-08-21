@@ -30,7 +30,10 @@ const stagingCreds = {
 	database: process.env.STAGE_NAME,
 	user: process.env.STAGE_USER,
 	password: process.env.STAGE_PASS,
-	port: 5432
+	port: 5432,
+	ssl: {
+		rejectUnauthorized: false
+	}
 }
 
 let credsToUse

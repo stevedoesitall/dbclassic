@@ -1,4 +1,12 @@
 import User from "../models/User.js"
+import redis from "redis"
+
+const client = redis.createClient(6379)
+const THIRTY_MINUTES = 1800
+
+client.on("error", (error) => {
+	console.error(error)
+})
 
 const usersController = {
 	get: {
@@ -16,7 +24,25 @@ const usersController = {
 
 		async byId(req, res) {
 			const id = req.params.id
-			const result = await new User().fetchById(id)
+			let result
+
+			client.get(id, async (err, user) => {
+				if (user) {
+					result = await JSON.parse(user)
+
+				} else {
+					result = await new User().fetchById(id)
+
+					if (result.error) {
+						return res.status(404).json({
+							error: result.error
+						})
+					}
+					client.setex(id, THIRTY_MINUTES, JSON.stringify(result))
+				}
+
+				return res.status(200).json(result)
+			})
 
 			if (result.error) {
 				return res.status(404).json({

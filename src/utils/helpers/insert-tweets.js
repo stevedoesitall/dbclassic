@@ -4,13 +4,15 @@ import Tweet from "../../../models/Tweet.js"
 
 import { mailCreds, twitterCreds } from "../../../config/credentials.js"
 
+//QA AND FIX THIS SCRIPT!
+
 const insertTweets = async () => {
 	const USER_ID = "133110529"
 	const MAX_RESULTS = 100
 	const TWEET_FIELDS = "created_at"
 	let message = ""
 
-	const yesterday = new Date(Date.now() - 864e5 * 0)
+	const yesterday = new Date(Date.now() - 864e5 * 5)
 	const year = yesterday.getFullYear()
 
 	let month = yesterday.getMonth() + 1
@@ -52,7 +54,7 @@ const insertTweets = async () => {
 			const insert = await tweet.insertOne(id, text, createdAt)
 
 			if (insert.error) {
-				message = "Erroring inserting tweet"
+				message = `Erroring inserting tweet: ${insert.error}`
 				throw new Error(message)
 			}
 		})
