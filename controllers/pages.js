@@ -6,7 +6,7 @@ const pagesController = {
 		const tweet = new Tweet()
 		const userCookies = req.cookies
 		const data = await tweet.fetchDates()
-		
+
 		const { lastPageview, loggedIn } = req.session
 		const { allDates, yearHeaders } = data.results
 
@@ -16,7 +16,40 @@ const pagesController = {
 			loggedIn,
 			yearHeaders,
 			allDates,
-			userId: userCookies.momus_id
+			userId: userCookies.momus_id ? userCookies.momus_id : null
+		})
+	},
+
+	async renderTweet(req, res) {
+		const id = req.params.id
+		const data = await new Tweet().fetchById(id)
+		
+		if (data.error) {
+			return res.render("error", {
+				errMsg: data.error
+			})
+		}
+
+		return res.render("tweet", {
+			data: data.result
+		})
+	},
+
+	async renderDate(req, res) {
+		const date = req.params.date
+		const data = await new Tweet().fetchByDate(date)
+		const { rows, prevDate, nextDate, formattedDate } = data.results
+
+		if (data.error) {
+			return res.render("error", {
+				errMsg: data.error
+			})
+		}
+		return res.render("date", {
+			data: rows,
+			prevDate: prevDate,
+			nextDate: nextDate,
+			date: formattedDate
 		})
 	},
 

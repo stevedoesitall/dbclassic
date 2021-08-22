@@ -14,9 +14,8 @@ const checkLogin = async (req, res, next) => {
 		result.last_pageview && result.logged_in ? result.last_pageview : false
 		req.session.loginId = userCookies.momus_id
 
-		if (!req.session.loggedIn) {
-			res.clearCookie("momus_id")
-		}
+	} else {
+		req.session.loggedIn = false
 	}
 
 	next()

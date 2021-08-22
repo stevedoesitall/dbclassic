@@ -11,8 +11,7 @@
 		"dev": "nodemon src/app.js",
 		"git": "git init && git status && git add . && git commit -m 'Committing' && git push",
 		"start": "node src/app.js",
-		"test": "mocha --recursive",
-		"format": "npx prettier --write ."
+		"test": "mocha --recursive --exit"
 	},
 	"eslintConfig": {
 		"env": {
@@ -53,14 +52,6 @@
 		"/sandbox",
 		"/models"
 	],
-	"prettier": {
-		"trailingComma": "none",
-		"useTabs": true,
-		"semi": false,
-		"singleQuote": false,
-		"quoteProps": "as-needed",
-		"bracketSpacing": true
-	},
 	"author": "Steve Giordano",
 	"license": "ISC",
 	"description": "Fullstack app for the Dadboner Twitter account.",
@@ -80,7 +71,6 @@
 	},
 	"devDependencies": {
 		"eslint": "^7.31.0",
-		"mocha": "^9.0.3",
-		"prettier": "^2.3.2"
+		"mocha": "^9.0.3"
 	}
 }

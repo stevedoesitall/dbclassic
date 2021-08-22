@@ -24,7 +24,7 @@
 		<li><a href="/search">Search</a></li>
 
 		{{#if lastPageview}}
-		<li><a href="/tweets/date/{{lastPageview}}">Last Pageview</a></li>
+		<li><a href="/date/{{lastPageview}}">Last Pageview</a></li>
 		{{/if}}
 	</ul>
 </div>
@@ -37,7 +37,7 @@
 	<ul>
 		{{#each allDates}}
 		<li id="day-{{this.date}}" class="date-item">
-			<a href="/tweets/date/{{this.date}}">{{this.date}}</a>
+			<a href="/date/{{this.date}}">{{this.date}}</a>
 		</li>
 		{{/each}}
 	</ul>
