@@ -9,7 +9,6 @@ const filterTweetsArray = async (tweets) => {
 
 		if (result.error && id && text && createdAt) {
 			filteredTweets.push(tweet)
-		} else if (!result.error) {
 		}
 	}
 

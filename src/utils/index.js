@@ -1,4 +1,4 @@
-import insertTweets from "./helpers/insert-tweets.js"
+import insertTweets from "./insert-tweets.js"
 
 const _ = {
 	insertTweets

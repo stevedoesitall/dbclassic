@@ -1,7 +1,7 @@
-import express from "express"
+import { Router } from "express"
 import tweetsController from "../../controllers/tweets.js"
 
-const router = express.Router()
+const router = Router()
 
 router.get("/:id", tweetsController.get.byId)
 router.get("/date/:date", tweetsController.get.byDate)

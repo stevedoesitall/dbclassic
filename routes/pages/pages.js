@@ -1,10 +1,10 @@
-import express from "express"
+import { Router } from "express"
 import auth from "../../middleware/auth.js"
 import checkLogin from "../../middleware/check-login.js"
 import updateLastPageview from "../../middleware/update-last-pv.js"
 import pagesController from "../../controllers/pages.js"
 
-const router = express.Router()
+const router = Router()
 
 router.get("/", checkLogin, pagesController.renderHome)
 router.get("/account/:id", auth, pagesController.renderAccount)

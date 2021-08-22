@@ -1,10 +1,8 @@
 import fetch from "node-fetch"
 import nodemailer from "nodemailer"
-import Tweet from "../../../models/Tweet.js"
+import Tweet from "../../models/Tweet.js"
 
-import { mailCreds, twitterCreds } from "../../../config/credentials.js"
-
-//QA AND FIX THIS SCRIPT!
+import { mailCreds, twitterCreds } from "../../config/credentials.js"
 
 const insertTweets = async () => {
 	const USER_ID = "133110529"
@@ -12,7 +10,7 @@ const insertTweets = async () => {
 	const TWEET_FIELDS = "created_at"
 	let message = ""
 
-	const yesterday = new Date(Date.now() - 864e5 * 5)
+	const yesterday = new Date(Date.now() - 864e5)
 	const year = yesterday.getFullYear()
 
 	let month = yesterday.getMonth() + 1
@@ -37,7 +35,6 @@ const insertTweets = async () => {
 		)
 
 		const results = await response.json()
-
 		const resultCount = results.meta.result_count
 
 		if (!resultCount) {
@@ -46,18 +43,23 @@ const insertTweets = async () => {
 		}
 
 		const tweet = new Tweet()
-
 		const data = results.data
 
-		data.forEach(async (item) => {
-			const { id, text, created_at: createdAt } = item
-			const insert = await tweet.insertOne(id, text, createdAt)
-
-			if (insert.error) {
-				message = `Erroring inserting tweet: ${insert.error}`
+		if (resultCount > 1) {
+			const insert = await tweet.insertMany(data)
+			if (!insert.ok) {
+				message = insert.error
 				throw new Error(message)
 			}
-		})
+		} else {
+			const { id, text, created_at: createdAt } = data[0]
+			const insert = await tweet.insertOne(id, text, createdAt)
+
+			if (!insert.ok) {
+				message = insert.error
+				throw new Error(message)
+			}
+		}
 
 		message = `Saved ${resultCount} tweet${resultCount > 1 ? "s" : ""}`
 
@@ -80,7 +82,7 @@ const insertTweets = async () => {
 
 		const mailOptions = {
 			from: "plex.requester@yahoo.com",
-			to: "steve@momus.io",
+			to: "stephenagiordano@gmail.com",
 			subject: `DB Classic update for ${date}`,
 			text: `${message}`
 		}
