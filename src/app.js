@@ -8,21 +8,22 @@ import cookieParser from "cookie-parser"
 import morgan from "morgan"
 import session from "express-session"
 
+import accessLogStream from "../config/log.js"
 import sessionObj from "../config/session.js"
 import router from "../routes/index.js"
 import trackSession from "../middleware/track-session.js"
 import _ from "./utils/index.js"
-
-const today = new Date().toDateString()
-const logFile = `./logs/${today.replaceAll(" ", "_")}.txt`
-const logFilePath = path.resolve(logFile)
-const accessLogStream = fs.createWriteStream(logFilePath, { flags: "a" })
 
 dotenv.config({
 	path: ".env"
 })
 
 const app = express()
+const port = process.env.PORT
+const __dirname = path.resolve()
+
+const publicPath = path.join(__dirname, "./public")
+const viewsPath = path.join(__dirname, "./views")
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
@@ -35,12 +36,6 @@ app.use(morgan("combined", {
 	},
 	stream: accessLogStream
 }))
-
-const port = process.env.PORT
-const __dirname = path.resolve()
-
-const publicPath = path.join(__dirname, "./public")
-const viewsPath = path.join(__dirname, "./views")
 
 app.engine(
 	".html",
