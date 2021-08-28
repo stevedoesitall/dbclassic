@@ -1,7 +1,6 @@
 import util from "util"
 import dotenv from "dotenv"
 import redis from "redis"
-import Model from "./Model.js"
 import pool from "../config/database.js"
 import _ from "./utils/index.js"
 
@@ -13,48 +12,60 @@ const THIRTY_MINUTES = 1800
 
 client.get = util.promisify(client.get)
 
-class Tweet extends Model {
-	#table
+class Tweet {
 
-	constructor(table) {
-		super((table = modelTable))
-		this.#table = modelTable
+	constructor() {
+	
 	}
 
-	async fetchById(id) {
+	async fetchById(id, postCheck = false) {
 		let errMsg
 
 		try {
-			const results = await pool.query(
-				`SELECT * FROM ${this.#table} WHERE id = '${id}';`
-			)
-			const result = results.rows[0]
+			const cachedTweet = await client.get(id)
+			let result
+
+			if (cachedTweet) {
+				result = await JSON.parse(cachedTweet)
+			} else {
+				const query = {
+					text: "SELECT * FROM tweets WHERE id = $1",
+					values: [ id ]
+				}
+
+				const results = await pool.query(query)
+				result = results.rows[0]
+
+				if (!postCheck) {
+					client.setex(id, THIRTY_MINUTES, JSON.stringify(result))
+				}
+			}
 
 			if (!result) {
-				errMsg = `Tweet ${id} does not exist.`
+				errMsg = `Tweet ${id} does not exist on the tweets table.`
 				throw new Error(errMsg)
 			}
 
-			const cachedTweets = await client.get("tweetList")
-			let allTweets
-
-			if (cachedTweets) {
-				console.log("GETTING FROM REDIS")
-				allTweets = await JSON.parse(cachedTweets)
-			} else {
-				const response = await this.fetchAll()
-				allTweets = response.results
-				console.log("GETTING FROM PG")
-				client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
+			if (!postCheck) {
+				const cachedTweets = await client.get("tweetList")
+				let allTweets
+	
+				if (cachedTweets) {
+					allTweets = await JSON.parse(cachedTweets)
+				} else {
+					const response = await this.fetchAll()
+					allTweets = response.results
+					client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
+				}
+	
+				const linkedTweets = _.getLinkedTweets(allTweets, "id", id)
+	
+				result.text = result.text.replaceAll("&amp;", "&")
+				result.date = _.formatDateStr(result.created_at)
+				result.time = _.formatTime(result.created_at)
+				result.prevTweet = linkedTweets.prev
+				result.nextTweet = linkedTweets.next	
 			}
-
-			const linkedTweets = _.getLinkedTweets(allTweets, "id", id)
-
-			result.text = result.text.replaceAll("&amp;", "&")
-			result.date = _.formatDateStr(result.created_at)
-			result.time = _.formatTime(result.created_at)
-			result.prevTweet = linkedTweets.prev
-			result.nextTweet = linkedTweets.next
 
 			return {
 				ok: true,
@@ -62,25 +73,27 @@ class Tweet extends Model {
 			}
 
 		} catch (err) {
+			console.log(err)
 			return {
+				ok: false,
 				error: errMsg
 			}
 		} finally {
-			console.log(`fetchById completed on ${this.#table} table`)
+			console.log("fetchById completed on tweets table")
 		}
 	}
 
 	async fetchAll() {
-		let errMsg
-
 		try {
-			const results = await pool.query(`SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM ${
-				this.#table
-			} ORDER BY created_at ASC;`)
+			const query = {
+				text: "SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at ASC;",
+				values: null
+			}
+
+			const results = await pool.query(query)
 
 			if (!results.rows.length) {
-				errMsg = "No results found."
-				throw new Error(errMsg)
+				throw new Error("No results found.")
 			}
 
 			return {
@@ -89,31 +102,33 @@ class Tweet extends Model {
 			}
 
 		} catch (err) {
+			console.log(err)
 			return {
 				ok: false,
-				error: errMsg
+				error: err
 			}
 		} finally {
-			console.log(`fetchAll completed on ${this.#table} table`)
+			console.log("fetchAll completed on tweets table")
 		}
 	}
 
+	//Change to query param
 	async fetchByDate(date) {
-		let errMsg
-
 		try {
 			//Cache with Redis
 			const formattedDate = _.formatDateStr(date)
 			// const cachedTweetsByDate = await client.get(formattedDate)
 			// let results
 
-			const results = await pool.query(
-				`SELECT * FROM ${this.#table} WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = '${date}' ORDER BY created_at ASC;`
-			)
+			const query = {
+				text: "SELECT * FROM tweets WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = $1 ORDER BY created_at ASC;",
+				values: [ date ]
+			}
+
+			const results = await pool.query(query)
 
 			if (!results.rows.length) {
-				errMsg = `No tweet found from this date: ${date}. Kinda concering?`
-				throw new Error(errMsg)
+				throw new Error(`No tweet found from this date: ${date}. Kinda concering?`)
 			}
 
 			const cachedTweetsAll = await client.get("tweetList")
@@ -127,8 +142,7 @@ class Tweet extends Model {
 				const response = await this.fetchAll()
 
 				if (!response.ok) {
-					errMsg = "Error fetching all."
-					throw new Error(errMsg)
+					throw new Error("Error fetching all.")
 				}
 
 				allTweets = response.results
@@ -158,10 +172,10 @@ class Tweet extends Model {
 		} catch (err) {
 			return {
 				ok: false,
-				error: errMsg
+				error: err
 			}
 		} finally {
-			console.log(`fetchByDate completed on ${this.#table} table`)
+			console.log("fetchByDate completed on tweets table")
 		}
 	}
 
@@ -171,11 +185,15 @@ class Tweet extends Model {
 		try {
 			const results = {}
 			const queries = {
-				allDates:
-					"SELECT DISTINCT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date from tweets ORDER BY date ASC;",
+				allDates: {
+					text: "SELECT DISTINCT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date from tweets ORDER BY date ASC;",
+					values: null
+				},
 
-				yearHeaders:
-					"SELECT DISTINCT ON (year) date, year FROM (SELECT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date, SUBSTRING(TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD'), 1, 4) as year FROM tweets ORDER BY date) AS a ORDER BY year;"
+				yearHeaders: {
+					text: "SELECT DISTINCT ON (year) date, year FROM (SELECT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date, SUBSTRING(TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD'), 1, 4) as year FROM tweets ORDER BY date) AS a ORDER BY year;",
+					values: null
+				}
 			}
 
 			const allDates = await pool.query(queries.allDates)
@@ -204,7 +222,7 @@ class Tweet extends Model {
 				error: errMsg
 			}
 		} finally {
-			console.log(`fetchDates completed on ${this.#table} table`)
+			console.log("fetchDates completed on tweets table")
 		}
 	}
 
@@ -213,9 +231,12 @@ class Tweet extends Model {
 		let errMsg
 
 		try {
-			const results = await pool.query(
-				`SELECT * FROM ${this.#table} WHERE text ILIKE '%${textLower}%' ORDER BY created_at ASC;`
-			)
+			const query = {
+				text: "SELECT * FROM tweets WHERE text ILIKE $1 ORDER BY created_at ASC;",
+				values: [ `%${textLower}%` ]
+			}
+
+			const results = await pool.query(query)
 
 			if (!results.rows.length) {
 				errMsg = "No tweets found."
@@ -236,7 +257,7 @@ class Tweet extends Model {
 				error: errMsg
 			}
 		} finally {
-			console.log(`fetchByText completed on ${this.#table} table`)
+			console.log("fetchByText completed on tweets table")
 		}
 	}
 
@@ -250,17 +271,19 @@ class Tweet extends Model {
 			}
 
 			const escapedText = text.replaceAll("'", "''")
-			const result = await this.fetchById(id)
-
+			const result = await this.fetchById(id, true)
+			
 			if (!result.error) {
 				errMsg = `Tweet ID ${id} already exists.`
 				throw new Error(errMsg)
 			}
 
-			await pool.query(`
-                INSERT INTO ${this.#table} (id, text, created_at)
-                VALUES ('${id}', '${escapedText}','${createdAt}');
-            `)
+			const query = {
+				text: "INSERT INTO tweets (id, text, created_at) VALUES($1, $2, $3);",
+				values: [ id, escapedText, createdAt ]
+			}
+
+			await pool.query(query)
 
 			return {
 				ok: true
@@ -271,7 +294,7 @@ class Tweet extends Model {
 				error: errMsg
 			}
 		} finally {
-			console.log(`insertOne completed on ${this.#table} table`)
+			console.log("insertOne completed on tweets table")
 		}
 	}
 
@@ -291,24 +314,44 @@ class Tweet extends Model {
 				throw new Error(errMsg)
 			}
 
-			const values = await _.insertManyTweetsQB(filteredTweets)
+			let values = []
 
-			const insert = await pool.query(`
-                INSERT INTO ${this.#table} (id, text, created_at)
-                VALUES ${values};
-            `)
+			filteredTweets.forEach(tweet => {
+				values = [...values, ...Object.values(tweet)]
+			})
+
+			let text = "INSERT INTO tweets (id, text, created_at) VALUES"
+			let valuesText = ""
+			let startNum = 1
+			let total = 0
+
+			while (total < filteredTweets.length) {
+				valuesText = valuesText + `($${startNum},$${startNum + 1},$${startNum + 2}),`
+				total++
+				startNum = startNum + 3
+			}
+
+			text = `${text}${valuesText.slice(0, -1)};`
+			
+			const query = {
+				text: text,
+				values: values
+			}
+
+			const insert = await pool.query(query)
 
 			return {
 				ok: true,
 				rowCount: insert.rowCount
 			}
 		} catch (err) {
+			console.log(err)
 			return {
 				ok: false,
 				error: errMsg
 			}
 		} finally {
-			console.log(`insertMany completed on ${this.#table} table`)
+			console.log("insertMany completed on tweets table")
 		}
 	}
 }

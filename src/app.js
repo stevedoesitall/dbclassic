@@ -1,4 +1,3 @@
-import fs from "fs"
 import path from "path"
 import cron from "node-cron"
 import dotenv from "dotenv"
@@ -19,7 +18,6 @@ dotenv.config({
 })
 
 const app = express()
-const port = process.env.PORT
 const __dirname = path.resolve()
 
 const publicPath = path.join(__dirname, "./public")
@@ -65,10 +63,4 @@ app.use("", router.pages)
 
 cron.schedule("1 0 * * *", async () => await _.insertTweets())
 
-app.listen(port, (err) => {
-	if (err) {
-		console.log("Error starting server")
-	} else {
-		console.log(`Server running on port ${port}`)
-	}
-})
+export default app

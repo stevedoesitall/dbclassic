@@ -17,10 +17,9 @@ const usersController = {
 		async byId(req, res) {
 			const id = req.params.id
 			const data = await new User().fetchById(id)
+			
 			if (data.error) {
-				return res.status(404).json({
-					error: data.error
-				})
+				return res.status(404).json(data)
 			}
 
 			const result = data
@@ -33,9 +32,7 @@ const usersController = {
 			const data = await new User().fetchByName(name)
 
 			if (data.error) {
-				return res.status(404).json({
-					error: data.error
-				})
+				return res.status(404).json(data)
 			}
 
 			return res.status(200).json(data)
@@ -48,9 +45,7 @@ const usersController = {
 			const insert = await new User().insertOne(id, userName, password)
 
 			if (insert.error) {
-				return res.status(404).json({
-					error: insert.error
-				})
+				return res.status(404).json(insert)
 			}
 
 			return res.status(200).json(insert)

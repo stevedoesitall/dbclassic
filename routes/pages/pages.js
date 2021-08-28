@@ -8,7 +8,7 @@ const router = Router()
 
 router.get("/", checkLogin, pagesController.renderHome)
 router.get("/account/:id", auth, pagesController.renderAccount)
-router.get("/date/:date", updateLastPageview, pagesController.renderDate)
+router.get("/tweet/", updateLastPageview, pagesController.renderDate)
 router.get("/tweet/:id", pagesController.renderTweet)
 router.get("/search", pagesController.renderSearch)
 router.get("/login", pagesController.renderLogin)

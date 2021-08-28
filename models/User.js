@@ -1,28 +1,23 @@
-import Model from "./Model.js"
 import pool from "../config/database.js"
 import _ from "./utils/index.js"
 
-const modelTable = "users"
+class User {
 
-class User extends Model {
-	#table
+	constructor() {
 
-	constructor(table) {
-		super((table = modelTable))
-		this.#table = modelTable
 	}
 
 	async fetchAll() {
-		let errMsg
-
 		try {
-			const query = `SELECT * FROM ${this.#table} ORDER BY created_at ASC;`
+			const query = {
+				text: "SELECT * FROM users ORDER BY created_at ASC;",
+				values: null
+			}
 
 			const results = await pool.query(query)
 
 			if (!results.rows.length) {
-				errMsg = "No results found."
-				throw new Error(errMsg)
+				throw new Error("No results found.")
 			}
 
 			return {
@@ -30,29 +25,29 @@ class User extends Model {
 				results: results.rows
 			}
 		} catch (err) {
-			console.log(errMsg)
+			console.log(err)
 
 			return {
 				ok: false,
-				error: errMsg
+				error: err
 			}
 		} finally {
-			console.log(`fetchAll completed on ${this.#table} table`)
+			console.log("fetchAll completed on users table")
 		}
 	}
 
 	async fetchById(id) {
-		let errMsg
-
 		try {
-			const results = await pool.query(
-				`SELECT * FROM ${this.#table} WHERE id = '${id}';`
-			)
+			const query = {
+				text: "SELECT * FROM users WHERE id = $1",
+				values: [ id ]
+			}
+
+			const results = await pool.query(query)
 			const result = results.rows[0]
 
 			if (!result) {
-				errMsg = `ID ${id} does not exist on ${this.#table} table.`
-				throw new Error(errMsg)
+				throw new Error(`ID ${id} does not exist on users table.`)
 			}
 
 			return {
@@ -60,29 +55,29 @@ class User extends Model {
 				result
 			}
 		} catch (err) {
-			console.log(errMsg)
+			console.log(err)
 			
 			return {
 				ok: false,
-				error: errMsg
+				error: err
 			}
 		} finally {
-			console.log(`fetchById completed on ${this.#table} table`)
+			console.log("fetchById completed on users table")
 		}
 	}
 
 	async fetchByName(name) {
-		let errMsg
-
 		try {
-			const results = await pool.query(
-				`SELECT * FROM ${this.#table} WHERE user_name = '${name}';`
-			)
+			const query = {
+				text: "SELECT * FROM users WHERE name = $1",
+				values: [ name ]
+			}
+
+			const results = await pool.query(query)
 			const result = results.rows[0]
 
 			if (!result) {
-				errMsg = `User Name ${name} does not exist on ${this.#table} table.`
-				throw new Error(errMsg)
+				throw new Error(`User Name ${name} does not exist on users table.`)
 			}
 
 			return {
@@ -90,27 +85,26 @@ class User extends Model {
 				result
 			}
 		} catch (err) {
-			console.log(errMsg)
+			console.log(err)
 			
 			return {
 				ok: false,
-				error: errMsg
+				error: err
 			}
 		} finally {
-			console.log(`fetchOne completed on ${this.#table} table`)
+			console.log("fetchOne completed on users table")
 		}
 	}
 
 	async insertOne(id, userName, password) {
 		let errMsg
-
 		try {
-			if (!id || !userName || password) {
-				errMsg = `Missing all required parameters.`
+			if (!id || !userName || !password) {
+				errMsg = "Missing all required parameters."
 				throw new Error(errMsg)
 			}
 
-			const result = await this.fetchOne(id)
+			const result = await this.fetchById(id)
 
 			if (!result.error) {
 				errMsg = `User ID ${id} already exists.`
@@ -119,10 +113,12 @@ class User extends Model {
 
 			const createdAt = new Date().toISOString()
 
-			await pool.query(`
-                INSERT INTO ${this.#table} (id, user_name, password, created_at)
-                VALUES ('${id}', '${userName}', '${password}', '${createdAt}');
-            `)
+			const query = {
+				text: "INSERT INTO users (id, user_name, password, created_at) VALUES($1, $2, $3, $4);",
+				values: [ id, userName, password, createdAt ]
+			}
+
+			await pool.query(query)
 
 			return {
 				ok: true
@@ -135,7 +131,7 @@ class User extends Model {
 				error: errMsg
 			}
 		} finally {
-			console.log(`insertOne completed on ${this.#table} table`)
+			console.log("insertOne completed on users table")
 		}
 	}
 
@@ -143,44 +139,48 @@ class User extends Model {
 		let errMsg
 
 		try {
-			const updateKeys = Object.keys(updates)
-
-			if (!updateKeys.length) {
+			if (!updates || !Object.keys(updates)) {
 				errMsg = "No updates provided."
 				throw new Error(errMsg)
 			}
 
-			const allowedUpdates = ["lastPageview", "password", "loggedIn"]
-			const updatesCheck = updateKeys.filter((update) =>
-				allowedUpdates.includes(update)
-			)
+			const updateKeys = Object.keys(updates)
 
-			if (updatesCheck.length !== updateKeys.length) {
-				errMsg = "Invalid update parameters provided."
+			const result = await this.fetchById(id)
+
+			if (result.error) {
+				errMsg = `User ID ${id} does not exist.`
 				throw new Error(errMsg)
 			}
 
-			const updateQuery = _.updateOneUserQB(
-				updates,
-				updateKeys,
-				id,
-				this.#table
-			)
+			const allowedUpdates = [ "lastPageview", "password", "loggedIn", "userName" ]
+			const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
 
-			await pool.query(updateQuery)
+			if (updatesCheck.length !== updateKeys.length) {
+				throw new Error("Invalid update parameters provided.")
+			}
+
+			const updateQuery = _.updateOneUserQB(updates, updateKeys, id)
+			
+			const query = {
+				text: updateQuery.text,
+				values: updateQuery.values
+			}
+			
+			await pool.query(query)
 
 			return {
 				ok: true
 			}
 		} catch (err) {
-			console.log(errMsg)
+			console.log(err)
 			
 			return {
 				ok: false,
 				error: errMsg
 			}
 		} finally {
-			console.log(`updateOne completed on ${this.#table} table`)
+			console.log("updateOne completed on users table")
 		}
 	}
 }

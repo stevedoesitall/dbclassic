@@ -36,15 +36,22 @@ const pagesController = {
 	},
 
 	async renderDate(req, res) {
-		const date = req.params.date
-		const data = await new Tweet().fetchByDate(date)
-		const { rows, prevDate, nextDate, formattedDate } = data.results
+		const date = req.query.date
+		let data
+		
+		//Add validation for date format
+		if (date) {
+			data = await new Tweet().fetchByDate(date)
+		}
 
-		if (data.error) {
+		if (!data || data.error) {
 			return res.render("error", {
-				errMsg: data.error
+				errMsg: "Something went wrong."
 			})
 		}
+
+		const { rows, prevDate, nextDate, formattedDate } = data.results
+
 		return res.render("date", {
 			data: rows,
 			prevDate: prevDate,

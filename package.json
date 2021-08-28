@@ -8,9 +8,9 @@
 	"type": "module",
 	"scripts": {
 		"build": "",
-		"dev": "nodemon src/app.js",
+		"dev": "nodemon bin/server.js",
 		"git": "git init && git status && git add . && git commit -m 'Committing' && git push",
-		"start": "node src/app.js",
+		"start": "node bin/server.js",
 		"test": "mocha --recursive --exit"
 	},
 	"eslintConfig": {
@@ -49,8 +49,7 @@
 		"/test",
 		"/node_modules",
 		"/dist",
-		"/sandbox",
-		"/models"
+		"/sandbox"
 	],
 	"author": "Steve Giordano",
 	"license": "ISC",

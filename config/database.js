@@ -46,6 +46,11 @@ if (enviornment === "development") {
 	credsToUse = prodCreds
 }
 
+credsToUse.pool = {
+	min: 2,
+	max: 10
+}
+
 const pool = new Pool(credsToUse)
 
 export default pool

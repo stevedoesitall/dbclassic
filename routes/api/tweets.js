@@ -4,10 +4,9 @@ import tweetsController from "../../controllers/tweets.js"
 const router = Router()
 
 router.get("/:id", tweetsController.get.byId)
-router.get("/date/:date", tweetsController.get.byDate)
 router.get("/", tweetsController.get.all)
 
-router.post("/one", tweetsController.post.addOne)
-router.post("/many", tweetsController.post.addMany)
+router.post("/bulk", tweetsController.post.addMany)
+router.post("/", tweetsController.post.addOne)
 
 export { router as tweetsRouter }
