@@ -1,0 +1,2 @@
+::ffff:127.0.0.1 - - [28/Aug/2021:04:08:07 +0000] "GET /users/name/Steve HTTP/1.1" 200 192 "http://localhost:8083/login" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0"
+::ffff:127.0.0.1 - - [28/Aug/2021:04:08:07 +0000] "PUT /users HTTP/1.1" 200 11 "http://localhost:8083/login" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0"

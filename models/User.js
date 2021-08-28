@@ -69,7 +69,7 @@ class User {
 	async fetchByName(name) {
 		try {
 			const query = {
-				text: "SELECT * FROM users WHERE name = $1",
+				text: "SELECT * FROM users WHERE user_name = $1",
 				values: [ name ]
 			}
 
@@ -161,7 +161,7 @@ class User {
 			}
 
 			const updateQuery = _.updateOneUserQB(updates, updateKeys, id)
-			
+
 			const query = {
 				text: updateQuery.text,
 				values: updateQuery.values
