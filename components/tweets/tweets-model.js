@@ -1,8 +1,10 @@
 import util from "util"
 import dotenv from "dotenv"
 import redis from "redis"
-import pool from "../config/database.js"
-import _ from "./utils/index.js"
+import pool from "../../config/database.js"
+import { formatDateStr, formatTime } from "../../utils/format-date-time.js"
+import { filterTweetsArray } from "../../utils/query-helpers.js"
+import getLinkedTweets from "../../utils/get-dll.js"
 
 dotenv.config()
 
@@ -58,11 +60,11 @@ class Tweet {
 					client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
 				}
 	
-				const linkedTweets = _.getLinkedTweets(allTweets, "id", id)
+				const linkedTweets = getLinkedTweets(allTweets, "id", id)
 	
 				result.text = result.text.replaceAll("&amp;", "&")
-				result.date = _.formatDateStr(result.created_at)
-				result.time = _.formatTime(result.created_at)
+				result.date = formatDateStr(result.created_at)
+				result.time = formatTime(result.created_at)
 				result.prevTweet = linkedTweets.prev
 				result.nextTweet = linkedTweets.next	
 			}
@@ -116,7 +118,7 @@ class Tweet {
 	async fetchByDate(date) {
 		try {
 			//Cache with Redis
-			const formattedDate = _.formatDateStr(date)
+			const formattedDate = formatDateStr(date)
 			// const cachedTweetsByDate = await client.get(formattedDate)
 			// let results
 
@@ -149,7 +151,7 @@ class Tweet {
 				client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
 			}
 
-			const linkedDates = _.getLinkedTweets(allTweets, "date", date)
+			const linkedDates = getLinkedTweets(allTweets, "date", date)
 
 			results.formattedDate = formattedDate
 			results.prevDate = linkedDates.prev
@@ -157,7 +159,7 @@ class Tweet {
 
 			results.rows.map((row) => {
 				row.text = row.text.replaceAll("&amp;", "&")
-				row.time = _.formatTime(row.created_at)
+				row.time = formatTime(row.created_at)
 			})
 
 			return {
@@ -307,7 +309,7 @@ class Tweet {
 				throw new Error(errMsg)
 			}
 
-			const filteredTweets = await _.filterTweetsArray(tweets)
+			const filteredTweets = await filterTweetsArray(tweets)
 
 			if (!filteredTweets.length) {
 				errMsg = "All tweets were duplicate."

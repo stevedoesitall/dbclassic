@@ -1,5 +1,5 @@
-import DoublyLinkedList from "../../DoublyLinkedList.js"
-import _ from "../index.js"
+import DoublyLinkedList from "./create-dll.js"
+import { formatDateISO } from "./format-date-time.js"
 
 const getLinkedTweets = (allTweets, type, value) => {
 	const tweetList = new DoublyLinkedList()
@@ -7,7 +7,7 @@ const getLinkedTweets = (allTweets, type, value) => {
 
 	allTweets.forEach(tweet => {
 		if (type === "date") {
-			tweetValues.push(_.formatDateISO(tweet.date))
+			tweetValues.push(formatDateISO(tweet.date))
 		} else {
 			tweetValues.push(tweet[type])
 		}

@@ -1,4 +1,4 @@
-import User from "../models/User.js"
+import User from "../components/users/users-model.js"
 
 const updateLastPageview = async (req, res, next) => {
 	const date = req.query.date

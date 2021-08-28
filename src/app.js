@@ -1,5 +1,5 @@
 import path from "path"
-import cron from "node-cron"
+// import cron from "node-cron"
 import dotenv from "dotenv"
 import express from "express"
 import exphbs from "express-handlebars"
@@ -9,9 +9,9 @@ import session from "express-session"
 
 import accessLogStream from "../config/log.js"
 import sessionObj from "../config/session.js"
-import router from "../routes/index.js"
+import router from "../utils/get-routes.js"
 import trackSession from "../middleware/track-session.js"
-import _ from "./utils/index.js"
+// import _ from "./utils/index.js"
 
 dotenv.config({
 	path: ".env"
@@ -61,6 +61,6 @@ app.use("/tweets", router.tweets)
 app.use("/users", router.users)
 app.use("", router.pages)
 
-cron.schedule("1 0 * * *", async () => await _.insertTweets())
+// cron.schedule("1 0 * * *", async () => await _.insertTweets())
 
 export default app

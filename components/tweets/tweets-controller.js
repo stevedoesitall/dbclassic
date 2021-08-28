@@ -1,4 +1,4 @@
-import Tweet from "../models/Tweet.js"
+import Tweet from "./tweets-model.js"
 
 const tweetsController = {
 	get: {

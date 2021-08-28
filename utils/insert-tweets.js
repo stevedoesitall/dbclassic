@@ -2,7 +2,7 @@ import fetch from "node-fetch"
 import nodemailer from "nodemailer"
 import Tweet from "../../models/Tweet.js"
 
-import { mailCreds, twitterCreds } from "../../config/credentials.js"
+import { mailCreds, twitterCreds } from "../config/credentials.js"
 
 const insertTweets = async () => {
 	const USER_ID = "133110529"

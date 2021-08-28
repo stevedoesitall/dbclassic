@@ -1,5 +1,5 @@
-import pool from "../config/database.js"
-import _ from "./utils/index.js"
+import pool from "../../config/database.js"
+import { updateOneUserQB } from "../../utils/query-helpers.js"
 
 class User {
 
@@ -160,7 +160,7 @@ class User {
 				throw new Error("Invalid update parameters provided.")
 			}
 
-			const updateQuery = _.updateOneUserQB(updates, updateKeys, id)
+			const updateQuery = updateOneUserQB(updates, updateKeys, id)
 
 			const query = {
 				text: updateQuery.text,

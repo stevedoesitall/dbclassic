@@ -1,4 +1,4 @@
-import Tweet from "../../Tweet.js"
+import Tweet from "../components/tweets/tweets-model.js"
 
 const filterTweetsArray = async (tweets) => {
 	const filteredTweets = []

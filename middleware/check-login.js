@@ -1,4 +1,4 @@
-import User from "../models/User.js"
+import User from "../components/users/users-model.js"
 
 const checkLogin = async (req, res, next) => {
 	const userCookies = req.cookies

@@ -1,5 +1,5 @@
-import User from "../models/User.js"
-import Tweet from "../models/Tweet.js"
+import User from "../users/users-model.js"
+import Tweet from "../tweets/tweets-model.js"
 
 const pagesController = {
 	async renderHome(req, res) {

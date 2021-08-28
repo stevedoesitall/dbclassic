@@ -1,5 +1,5 @@
 import { Router } from "express"
-import usersController from "../../controllers/users.js"
+import usersController from "./users-controller.js"
 import setCookie from "../../middleware/set-cookie.js"
 
 const router = Router()

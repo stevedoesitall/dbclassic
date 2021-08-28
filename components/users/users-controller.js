@@ -1,4 +1,4 @@
-import User from "../models/User.js"
+import User from "./users-model.js"
 
 const usersController = {
 	get: {
