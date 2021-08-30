@@ -5,6 +5,7 @@ const formatTime = (createdAt) => {
 	const tweetTime = new Date(createdAt).getTime()
 	const tweetDate = new Date(tweetTime - FIVE_HOURS)
 	const marker = tweetDate.getHours() >= 12 ? "PM" : "AM"
+	
 	let hour = tweetDate.getHours()
 
 	if (hour > 12) {
