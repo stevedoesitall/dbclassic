@@ -29,10 +29,7 @@ const formatDateISO = (date) => {
 	const tweetMonth = convertDate(tweetDate.getMonth() + 1)
 	const tweetDay = convertDate(tweetDate.getDate())
 
-	const tweetDateSubString = `${tweetYear}-${tweetMonth}-${tweetDay}`.substring(
-		0,
-		10
-	)
+	const tweetDateSubString = `${tweetYear}-${tweetMonth}-${tweetDay}`.substring(0, 10)
 
 	return tweetDateSubString
 }

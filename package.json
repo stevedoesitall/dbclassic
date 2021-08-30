@@ -7,11 +7,10 @@
 	},
 	"type": "module",
 	"scripts": {
-		"build": "",
+		"commit": "git init && git status && git add . && git commit -m '$MSG' && git push",
 		"dev": "nodemon bin/server.js",
-		"git": "git init && git status && git add . && git commit -m 'Committing' && git push",
 		"start": "node bin/server.js",
-		"test": "mocha  components/**/*.test.js --exit"
+		"test": "mocha components/**/*.test.js --exit"
 	},
 	"eslintConfig": {
 		"env": {
