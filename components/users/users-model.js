@@ -154,6 +154,7 @@ class User {
 			}
 
 			const allowedUpdates = [ "lastPageview", "password", "loggedIn", "userName" ]
+			
 			const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
 
 			if (updatesCheck.length !== updateKeys.length) {
