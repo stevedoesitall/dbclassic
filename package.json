@@ -7,7 +7,7 @@
 	},
 	"type": "module",
 	"scripts": {
-		"commit": "git init && git status && git add . && git commit -m '$MSG' && git push",
+		"commit": "git init && git status && git add . && git commit -m $MSG && git push",
 		"dev": "nodemon bin/server.js",
 		"start": "node bin/server.js",
 		"test": "mocha components/**/*.test.js --exit"
