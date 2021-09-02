@@ -2,5 +2,12 @@
 	<p class="tweet-time emphasis">
 		<a href="https://twitter.com/DadBoner/status/{{this.id}}">{{this.time}}</a>
 	</p>
-	<p class="tweet-text">{{this.text}}</p>
+	<div class="tweet-text">
+		<p class="tweet-text">{{this.text}}</p>
+		{{#if this.isFavorite}}
+			<button>Remove Favorite</button>
+		{{else}}
+			<button>Add Favorite</button>
+		{{/if}}
+	</div>
 </div>

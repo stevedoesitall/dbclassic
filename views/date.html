@@ -3,12 +3,18 @@
 	<h2>Tweets from {{date}}</h2>
 </div>
 
-<div id="date-list">{{#each data}} {{>tweet-block}} {{/each}}</div>
+<div id="date-list">
+	{{#each data}} 
+		{{>tweet-block}} 
+	{{/each}}
+</div>
 
 <div id="date-links">
 	{{#if prevDate}}
 	<p><a href="/tweet?date={{prevDate}}">Previous ({{prevDate}})</a></p>
-	{{/if}} {{#if nextDate}}
+	{{/if}} 
+	
+	{{#if nextDate}}
 	<p><a href="/tweet?date={{nextDate}}">Next ({{nextDate}})</a></p>
 	{{/if}}
 </div>

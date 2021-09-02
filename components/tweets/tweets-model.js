@@ -8,7 +8,6 @@ import getLinkedTweets from "../../utils/get-dll.js"
 
 dotenv.config()
 
-const modelTable = "tweets"
 const client = redis.createClient(process.env.REDIS_URL)
 const THIRTY_MINUTES = 1800
 
