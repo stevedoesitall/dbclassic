@@ -53,12 +53,13 @@ const pagesController = {
 
 		if (userId) {
 			const favoritesData = await new Favorite().fetchByUserId(userId)
-			favoritesData && favoritesData.results.forEach(tweet => {
-				favorites.push(tweet.tweet_id)
-			})
+			if (favoritesData.ok) {
+				favoritesData && favoritesData.results.forEach(tweet => {
+					favorites.push(tweet.tweet_id)
+				})
+			}
 
 			rows.map(row => row.isFavorite = favorites.includes(row.id))
-
 		} 
 
 		return res.render("date", {
