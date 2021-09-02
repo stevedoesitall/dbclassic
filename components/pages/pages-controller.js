@@ -41,8 +41,8 @@ const pagesController = {
 		const data = await new Tweet().fetchByDate(date)
 		const userId = req.session.loginId
 		const favorites = []
-		let isLoggedIn = true
-
+		const { loggedIn } = req.session
+		console.log(req.session)
 		if (!data || data.error) {
 			return res.render("error", {
 				errMsg: "Something went wrong."
@@ -53,10 +53,9 @@ const pagesController = {
 
 		if (userId) {
 			const favoritesData = await new Favorite().fetchByUserId(userId)
+
 			if (favoritesData.ok) {
-				favoritesData && favoritesData.results.forEach(tweet => {
-					favorites.push(tweet.tweet_id)
-				})
+				favoritesData.results.forEach(tweet => favorites.push(tweet.tweet_id))
 			}
 
 			rows.map(row => row.isFavorite = favorites.includes(row.id))
@@ -67,7 +66,7 @@ const pagesController = {
 			prevDate: prevDate,
 			nextDate: nextDate,
 			date: formattedDate,
-			isLoggedIn
+			loggedIn
 		})
 	},
 
