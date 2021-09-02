@@ -14,6 +14,7 @@ const checkLogin = async (req, res, next) => {
 	} else {
 		req.session.loggedIn = false
 		req.session.lastPageview = false
+		req.session.loginId = null
 	}
 
 	next()

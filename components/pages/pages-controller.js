@@ -41,7 +41,7 @@ const pagesController = {
 		const data = await new Tweet().fetchByDate(date)
 		const userId = req.session.loginId
 		const favorites = []
-		let isLoggedIn = false
+		let isLoggedIn = true
 
 		if (!data || data.error) {
 			return res.render("error", {
@@ -51,11 +51,9 @@ const pagesController = {
 
 		const { rows, prevDate, nextDate, formattedDate } = data.results
 
-
 		if (userId) {
-			isLoggedIn = true
 			const favoritesData = await new Favorite().fetchByUserId(userId)
-			favoritesData.results.forEach(tweet => {
+			favoritesData && favoritesData.results.forEach(tweet => {
 				favorites.push(tweet.tweet_id)
 			})
 

@@ -4,12 +4,10 @@
 	</p>
 	<div class="tweet-text">
 		<p class="tweet-text">{{this.text}}</p>
-		{{#if isLoggedIn}}
-			{{#if this.isFavorite}}
-				<button>Remove Favorite</button>
-			{{else}}
-				<button>Add Favorite</button>
-			{{/if}}
+		{{#if this.isFavorite}}
+			<button>Remove Favorite</button>
+		{{else}}
+			<button>Add Favorite</button>
 		{{/if}}
 	</div>
 </div>
