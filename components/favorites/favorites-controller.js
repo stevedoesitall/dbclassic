@@ -14,6 +14,24 @@ const favoriteController = {
 
 			return res.status(200).json(result)
 		}
+	},
+
+	post: {
+		async addOne(req, res) {
+			return res.status(200).json({
+				ok: true,
+				method: "POST"
+			})
+		}
+	},
+
+	delete: {
+		async removeOne(req, res) {
+			return res.status(200).json({
+				ok: true,
+				method: "DELETE"
+			})
+		}
 	}
 }
 

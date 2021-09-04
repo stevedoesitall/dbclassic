@@ -1,6 +1,6 @@
-import User from "../users/users-model.js"
-import Tweet from "../tweets/tweets-model.js"
-import Favorite from "../favorites/favorites-model.js"
+import User from "../components/users/users-model.js"
+import Tweet from "../components/tweets/tweets-model.js"
+import Favorite from "../components/favorites/favorites-model.js"
 
 const pagesController = {
 	async renderHome(req, res) {
@@ -42,7 +42,7 @@ const pagesController = {
 		const userId = req.session.loginId
 		const favorites = []
 		const { loggedIn } = req.session
-		console.log(req.session)
+
 		if (!data || data.error) {
 			return res.render("error", {
 				errMsg: "Something went wrong."

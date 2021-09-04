@@ -35,11 +35,10 @@ app.use(morgan("combined", {
 	stream: accessLogStream
 }))
 
-app.engine(
-	".html",
+app.engine(".html",
 	exphbs({
 		extname: ".html",
-		partialsDir: ["./views/partials/blocks", "./views/partials/ui"]
+		partialsDir: [ "./views/partials/blocks", "./views/partials/ui" ]
 	})
 )
 

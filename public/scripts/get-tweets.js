@@ -2,7 +2,6 @@ const searchBtn = document.querySelector("#search")
 const tweetsContainer = document.querySelector("#tweets-list")
 
 const getTweets = async (searchTerm) => {
-
 	tweetsContainer.innerHTML = ""
 	const response = await fetch(`/tweets?text=${searchTerm}`)
 

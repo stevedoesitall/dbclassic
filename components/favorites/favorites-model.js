@@ -38,11 +38,53 @@ class Favorite {
 	}
 
 	async addFavorite(userId, tweetId) {
+		let errMsg
+		try {
+			const query = {
+				text: "INSERT INTO users_tweets (user_id, tweet_id) VALUES($1, $2);",
+				values: [ userId, tweetId ]
+			}
 
+			const results = await pool.query(query)
+
+			return {
+				ok: true,
+				results: results
+			}
+		} catch (err) {
+			console.log(err)
+			return {
+				ok: false,
+				error: errMsg
+			}
+		} finally {
+			console.log("addFavorite completed on the users_tweets table")
+		}
 	}
 
 	async removeFavorite(userId, tweetId) {
-        
+		let errMsg
+		try {
+			const query = {
+				text: "DELETE FROM users_tweets WHERE user_id = $1 AND tweet_id = $2;",
+				values: [ userId, tweetId ]
+			}
+
+			const results = await pool.query(query)
+
+			return {
+				ok: true,
+				results: results
+			}
+		} catch (err) {
+			console.log(err)
+			return {
+				ok: false,
+				error: errMsg
+			}
+		} finally {
+			console.log("removeFavorite completed on the users_tweets table")
+		}
 	}
 }
 

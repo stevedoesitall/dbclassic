@@ -1,7 +1,7 @@
 import { Router } from "express"
-import auth from "../../middleware/auth.js"
-import checkLogin from "../../middleware/check-login.js"
-import updateLastPageview from "../../middleware/update-last-pv.js"
+import auth from "../middleware/auth.js"
+import checkLogin from "../middleware/check-login.js"
+import updateLastPageview from "../middleware/update-last-pv.js"
 import pagesController from "./pages-controller.js"
 
 const router = Router()

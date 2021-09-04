@@ -5,11 +5,13 @@
 	<div class="tweet-text">
 		<p class="tweet-text">{{this.text}}</p>
 		{{#if loggedIn}}
-			{{#if this.isFavorite}}
-				<button id="fav-{{this.id}}">Remove Favorite</button>
-			{{else}}
-				<button id="fav-{{this.id}}">Add Favorite</button>
-			{{/if}}
+			<button class="favorite-button is-fav-{{this.isFavorite}}" id="fav-{{this.id}}">
+				{{#if this.isFavorite}}
+					Remove Favorite
+				{{else}}
+					Add Favorite
+				{{/if}}
+			</button>
 		{{/if}}
 	</div>
 </div>
