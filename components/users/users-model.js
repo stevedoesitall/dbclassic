@@ -170,7 +170,10 @@ class User {
 			await pool.query(query)
 
 			return {
-				ok: true
+				ok: true,
+				response: {
+					userId: id
+				}
 			}
 		} catch (err) {
 			console.log(err)

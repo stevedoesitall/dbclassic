@@ -11,7 +11,6 @@ const getTweets = async (searchTerm) => {
 	}
 
 	const data = await response.json()
-	console.log(data)
 	const tweets = data.results
 
 	console.log(`${tweets.length} tweets found.`)

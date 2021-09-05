@@ -48,6 +48,10 @@ loginBtn.addEventListener("click", async () => {
 				throw new Error(errMsg)
 			}
 
+			const data = await userPutRes.json()
+
+			localStorage.setItem("userId", data.response.userId)
+
 			updateLoginMsg(successMsg, "success")
 		} catch (err) {
 			console.log("Throwing error", errMsg)

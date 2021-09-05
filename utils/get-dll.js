@@ -1,23 +1,16 @@
-import DoublyLinkedList from "./create-dll.js"
 import { formatDateISO } from "./format-date-time.js"
 
 const getLinkedTweets = (allTweets, type, value) => {
-	const tweetList = new DoublyLinkedList()
-	let tweetValues = []
+	const tweetValues = []
 
 	allTweets.forEach(tweet => {
-		if (type === "date") {
-			tweetValues.push(formatDateISO(tweet.date))
-		} else {
-			tweetValues.push(tweet[type])
-		}
+		const tweetValue = type === "date" ? formatDateISO(tweet.date) : tweet[type]
+		!tweetValues.includes(tweetValue) ? tweetValues.push(tweetValue) : null
 	})
 
-	tweetValues = [...new Set(tweetValues)]
-
-	const linkedTweets = tweetList.createList(tweetValues)
-	const prev = linkedTweets.get(value).prev ? linkedTweets.get(value).prev.val : null
-	const next = linkedTweets.get(value).next ? linkedTweets.get(value).next.val : null
+	const index = tweetValues.indexOf(value)
+	const prev = index > 0 ? tweetValues[index - 1] : null
+	const next = index < tweetValues.length - 1 ? tweetValues[index + 1] : null
 
 	return {
 		prev,

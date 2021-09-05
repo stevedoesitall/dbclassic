@@ -1,4 +1,3 @@
-import dotenv from "dotenv"
 import pool from "../../config/database.js"
 
 class Favorite {
@@ -34,7 +33,6 @@ class Favorite {
 		} finally {
 			console.log("fetchByUserId completed on users_tweets table")
 		}
-
 	}
 
 	async addFavorite(userId, tweetId) {
@@ -45,11 +43,10 @@ class Favorite {
 				values: [ userId, tweetId ]
 			}
 
-			const results = await pool.query(query)
+			await pool.query(query)
 
 			return {
-				ok: true,
-				results: results
+				ok: true
 			}
 		} catch (err) {
 			console.log(err)
@@ -70,11 +67,10 @@ class Favorite {
 				values: [ userId, tweetId ]
 			}
 
-			const results = await pool.query(query)
+			await pool.query(query)
 
 			return {
-				ok: true,
-				results: results
+				ok: true
 			}
 		} catch (err) {
 			console.log(err)
