@@ -15,7 +15,7 @@ const favoriteController = {
 			const data = await new Favorite().fetchByUserId(userId)
 
 			if (!data.ok) {
-				return res.status(404).json(data)
+				return res.status(204).json()
 			}
 
 			const result = data

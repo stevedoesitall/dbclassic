@@ -1,13 +1,16 @@
-const getTweets = async () => {
-	const userId = localStorage .getItem("userId")
+(async () => {
+	const userId = localStorage.getItem("userId")
 	const response = await fetch(`/favorites/${userId}`)
-	if (response.status === 204) {
-		console.log("No tweets.")
+
+	if (response.status === 204 || response.status === 404) {
+		return console.log("No tweets.")
 	}
 
 	const data = await response.json()
 
-	console.log(data.results)
-}
-
-getTweets()
+	if (data.results.length) {
+		data.results.forEach(tweet => {
+			console.log(tweet)
+		})
+	}
+})()
