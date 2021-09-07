@@ -60,6 +60,32 @@ class User {
 		}
 	}
 
+	async fetchBySession(session) {
+		try {
+
+			const results = await knex(this.tableName).where("latest_session_id", session)
+			const result = results[0]
+
+			if (!result) {
+				throw new Error(`Session ${session} does not exist on users table.`)
+			}
+
+			return {
+				ok: true,
+				result
+			}
+		} catch (err) {
+			console.log(err)
+			
+			return {
+				ok: false,
+				error: err
+			}
+		} finally {
+			console.log("fetchBySession completed on users table")
+		}
+	}
+
 	async fetchByName(name, password) {
 		let errMsg
 		try {

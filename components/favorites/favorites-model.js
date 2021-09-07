@@ -1,4 +1,5 @@
 import knex from "../../config/database.js"
+import User from "../users/users-model.js"
 
 class Favorite {
 	constructor() {
@@ -9,10 +10,12 @@ class Favorite {
 		return "users_tweets"
 	}
 
-	async fetchByUserId(userId) {
+	async fetchByUserId(session) {
 		let errMsg
 		try {
-
+			const user = await new User().fetchBySession(session)
+			const userId = user.result.id
+			
 			const results = await knex.raw("SELECT t.id as tweet_id, t.text as text FROM tweets t JOIN users_tweets ut ON ut.tweet_id = t.id JOIN users u ON u.id = ut.user_id WHERE ut.user_id = ?", [ userId ], "ORDER BY created_at ASC")
 
 			if (!results.rowCount) {

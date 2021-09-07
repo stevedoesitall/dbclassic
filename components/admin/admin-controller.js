@@ -2,7 +2,6 @@ import User from "../users/users-model.js"
 
 const adminController = {
 	async login(req, res) {
-		console.log("LOGGING IN")
 		const userName = req.body.userName
 		const data = await new User().fetchByName(userName)
 		const userId = data.result.id
