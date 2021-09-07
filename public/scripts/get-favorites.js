@@ -7,10 +7,20 @@
 	}
 
 	const data = await response.json()
+	const tweets = data.results
+	
+	if (tweets.length) {
+		const favoritesContainer = document.querySelector("#favorites-section")
+		const favoritesList = document.querySelector("#favorites-list")
+		let text = ""
 
-	if (data.results.length) {
-		data.results.forEach(tweet => {
-			console.log(tweet)
+		favoritesContainer.classList.remove("hidden")
+
+		tweets.forEach((tweet) => {
+			const url = `<li><a href="/tweet/${tweet.id}">${tweet.text}</a></li>`
+			text = text + url
 		})
+	
+		favoritesList.innerHTML = text
 	}
 })()
