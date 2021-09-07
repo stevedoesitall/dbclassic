@@ -1,7 +1,17 @@
 # DB Classic
 
-# Stack
+## Frontend
 
-- Node.js + Express.js
+- Handlebars.js template engine
+- Sass (Coming soon)
+
+## Backend
+
+- Node.js
+- Express.js
+
+## Database
+
 - PostgreSQL DB
-- Handlebars.js
+- Redis in-store memory
+- Knex query builder
