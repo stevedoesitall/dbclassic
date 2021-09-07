@@ -7,7 +7,6 @@ const pagesController = {
 		const tweet = new Tweet()
 		const userCookies = req.cookies
 		const data = await tweet.fetchDates()
-		console.log(req.session)
 		const { lastPageview, loggedIn } = req.session
 		const { allDates, yearHeaders } = data.results
 

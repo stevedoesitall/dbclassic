@@ -8,7 +8,10 @@ const updateLastPageview = async (req, res, next) => {
 		if (userCookies.momus_id === userSession.loginId) {
 			try {
 				const user = new User()
-				await user.updateOne(userSession.loginId, "lastPageview", date)
+				const updates = {
+					last_pageview: date
+				}
+				await user.updateOne(userSession.loginId, updates)
 			} catch (err) {
 				console.log(err)
 			}

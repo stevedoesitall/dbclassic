@@ -8,7 +8,6 @@ const tweetsController = {
 			if (req.query.text) {
 				data = await new Tweet().fetchByText(req.query.text)
 			} else if (req.query.date) {
-				console.log("BY DATE")
 				data = await new Tweet().fetchByDate(req.query.date)
 			}
 			else {
@@ -39,7 +38,6 @@ const tweetsController = {
 		},
 
 		async byDate(req, res) {
-			console.log("BY DATE")
 			const date = req.query.date
 			const data = await new Tweet().fetchByDate(date)
 
@@ -77,7 +75,7 @@ const tweetsController = {
 		}
 	},
 
-	put: {
+	patch: {
 		//TBD
 	},
 
