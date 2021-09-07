@@ -1,9 +1,10 @@
 import dotenv from "dotenv"
-import pkg from "pg"
+import pkg from "knex"
 
-dotenv.config()
+dotenv.config({
+	path: "../.env"
+})
 
-const { Pool } = pkg
 const enviornment = process.env.NODE_ENV
 
 const prodCreds = {
@@ -36,21 +37,27 @@ const stagingCreds = {
 	}
 }
 
-let credsToUse
+let connection
 
 if (enviornment === "development") {
-	credsToUse = devCreds
+	connection = devCreds
 } else if (enviornment === "staging") {
-	credsToUse = stagingCreds
+	connection = stagingCreds
 } else {
-	credsToUse = prodCreds
+	connection = prodCreds
 }
 
-credsToUse.pool = {
+connection.pool = {
 	min: 2,
 	max: 10
 }
 
-const pool = new Pool(credsToUse)
+const dbConfig = {
+	client: "postgresql",
+	connection
+}
 
-export default pool
+const Knex = pkg
+const knex = Knex(dbConfig)
+
+export default knex

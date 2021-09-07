@@ -9,14 +9,8 @@ favoriteButtons.forEach(button => {
 
 		if (isFavorite) {
 			method = "DELETE"
-			button.innerText = "Add Favorite"
-			button.classList.add("is-fav-false")
-			button.classList.remove("is-fav-true")
 		} else {
 			method = "POST"
-			button.innerText = "Remove Favorite"
-			button.classList.add("is-fav-true")
-			button.classList.remove("is-fav-false")
 		}
 
 		const response = await fetch("/favorites", {
@@ -32,9 +26,18 @@ favoriteButtons.forEach(button => {
 		const data = await response.json()
 		
 		if (data.ok) {
-			console.log("Success!")
+			if (isFavorite) {
+				button.innerText = "Add Favorite"
+				button.classList.add("is-fav-false")
+				button.classList.remove("is-fav-true")
+			} else {
+				button.innerText = "Remove Favorite"
+				button.classList.add("is-fav-true")
+				button.classList.remove("is-fav-false")
+			}
+	
 		} else {
-			console.log("Something went wrong.")
+			alert("Something went wrong.")
 		}
 	})
 })

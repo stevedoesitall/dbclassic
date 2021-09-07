@@ -10,6 +10,6 @@ router.get("/", usersController.get.all)
 
 router.post("/", usersController.post.addOne)
 
-router.put("/", setCookie, usersController.put.updateOne)
+router.patch("/", setCookie, usersController.patch.updateOne)
 
 export { router as usersRouter }

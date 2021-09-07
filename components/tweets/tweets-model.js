@@ -1,9 +1,8 @@
 import util from "util"
 import dotenv from "dotenv"
 import redis from "redis"
-import pool from "../../config/database.js"
+import knex from "../../config/database.js"
 import { formatDateStr, formatTime } from "../../utils/format-date-time.js"
-import { filterTweetsArray } from "../../utils/query-helpers.js"
 import getLinkedTweets from "../../utils/get-dll.js"
 
 dotenv.config()
@@ -19,6 +18,10 @@ class Tweet {
 	
 	}
 
+	get tableName() { 
+		return "tweets"
+	}
+
 	async fetchById(id, postCheck = false) {
 		let errMsg
 
@@ -29,17 +32,8 @@ class Tweet {
 			if (cachedTweet) {
 				result = await JSON.parse(cachedTweet)
 			} else {
-				const query = {
-					text: "SELECT * FROM tweets WHERE id = $1",
-					values: [ id ]
-				}
-
-				const results = await pool.query(query)
-				result = results.rows[0]
-
-				if (!postCheck) {
-					client.setex(id, THIRTY_MINUTES, JSON.stringify(result))
-				}
+				const results = await knex(this.tableName).where("id", id)
+				result = results[0]
 			}
 
 			if (!result) {
@@ -48,6 +42,7 @@ class Tweet {
 			}
 
 			if (!postCheck) {
+				client.setex(id, THIRTY_MINUTES, JSON.stringify(result))
 				const cachedTweets = await client.get("tweetList")
 				let allTweets
 	
@@ -86,12 +81,8 @@ class Tweet {
 
 	async fetchAll() {
 		try {
-			const query = {
-				text: "SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at ASC;",
-				values: null
-			}
 
-			const results = await pool.query(query)
+			const results = await knex.raw("SELECT id, text, created_at AT TIME ZONE 'GMT-05:00 DST' AS date FROM tweets ORDER BY created_at ASC;")
 
 			if (!results.rows.length) {
 				throw new Error("No results found.")
@@ -113,33 +104,24 @@ class Tweet {
 		}
 	}
 
-	//Change to query param
 	async fetchByDate(date) {
+		let errMsg
+
 		try {
-			//Cache with Redis
 			const formattedDate = formatDateStr(date)
-			// const cachedTweetsByDate = await client.get(formattedDate)
-			// let results
-
-			const query = {
-				text: "SELECT * FROM tweets WHERE to_char(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = $1 ORDER BY created_at ASC;",
-				values: [ date ]
-			}
-
-			const results = await pool.query(query)
-
-			if (!results.rows.length) {
-				throw new Error(`No tweet found from this date: ${date}. Kinda concering?`)
+			const results = await knex(this.tableName).whereRaw("TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = ?", [ date ]).orderBy("created_at", "asc")
+		
+			if (!results.length) {
+				errMsg = `No tweet found from this date: ${date}. Kinda concering?`
+				throw new Error(errMsg)
 			}
 
 			const cachedTweetsAll = await client.get("tweetList")
 			let allTweets
 
 			if (cachedTweetsAll) {
-				console.log("GETTING FROM REDIS")
 				allTweets = await JSON.parse(cachedTweetsAll)
 			} else {
-				console.log("GETTING FROM PG")
 				const response = await this.fetchAll()
 
 				if (!response.ok) {
@@ -149,14 +131,10 @@ class Tweet {
 				allTweets = response.results
 				client.setex("tweetList", THIRTY_MINUTES, JSON.stringify(allTweets))
 			}
-
+			
 			const linkedDates = getLinkedTweets(allTweets, "date", date)
 
-			results.formattedDate = formattedDate
-			results.prevDate = linkedDates.prev
-			results.nextDate = linkedDates.next
-
-			results.rows.map((row) => {
+			results.map((row) => {
 				row.text = row.text.replaceAll("&amp;", "&")
 				row.time = formatTime(row.created_at)
 			})
@@ -164,16 +142,17 @@ class Tweet {
 			return {
 				ok: true,
 				results: {
-					rows: results.rows,
-					prevDate: results.prevDate,
-					nextDate: results.nextDate,
-					formattedDate: results.formattedDate
+					rows: results,
+					prevDate: linkedDates.prev,
+					nextDate: linkedDates.next,
+					formattedDate
 				}
 			}
 		} catch (err) {
+			console.log(err)
 			return {
 				ok: false,
-				error: err
+				error: errMsg
 			}
 		} finally {
 			console.log("fetchByDate completed on tweets table")
@@ -185,19 +164,8 @@ class Tweet {
 
 		try {
 			const results = {}
-			const queries = {
-				allDates: {
-					text: "SELECT DISTINCT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date from tweets ORDER BY date ASC;",
-					values: null
-				},
 
-				yearHeaders: {
-					text: "SELECT DISTINCT ON (year) date, year FROM (SELECT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date, SUBSTRING(TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD'), 1, 4) as year FROM tweets ORDER BY date) AS a ORDER BY year;",
-					values: null
-				}
-			}
-
-			const allDates = await pool.query(queries.allDates)
+			const allDates = await knex.raw("SELECT DISTINCT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date from tweets ORDER BY date ASC;",)
 			results.allDates = allDates.rows
 
 			if (!results.allDates.length) {
@@ -205,7 +173,7 @@ class Tweet {
 				throw new Error(errMsg)
 			}
 
-			const yearHeaders = await pool.query(queries.yearHeaders)
+			const yearHeaders = await knex.raw("SELECT DISTINCT ON (year) date, year FROM (SELECT TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') as date, SUBSTRING(TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD'), 1, 4) as year FROM tweets ORDER BY date) AS a ORDER BY year;")
 			results.yearHeaders = yearHeaders.rows
 
 			if (!results.yearHeaders.length) {
@@ -228,29 +196,24 @@ class Tweet {
 	}
 
 	async fetchByText(text) {
-		const textLower = text.toLowerCase()
 		let errMsg
 
 		try {
-			const query = {
-				text: "SELECT * FROM tweets WHERE text ILIKE $1 ORDER BY created_at ASC;",
-				values: [ `%${textLower}%` ]
-			}
+			const textLower = "%" + text.toLowerCase() + "%"
+			const results = await knex(this.tableName).where("text", "ILIKE", textLower).orderBy("created_at", "asc")
 
-			const results = await pool.query(query)
-
-			if (!results.rows.length) {
+			if (!results.length) {
 				errMsg = "No tweets found."
 				throw new Error(errMsg)
 			}
 
-			results.rows.map((row) => {
+			results.map((row) => {
 				row.text = row.text.replaceAll("&amp;", "&")
 			})
 
 			return {
 				ok: true,
-				results: results.rows
+				results: results
 			}
 		} catch (err) {
 			return {
@@ -279,12 +242,13 @@ class Tweet {
 				throw new Error(errMsg)
 			}
 
-			const query = {
-				text: "INSERT INTO tweets (id, text, created_at) VALUES($1, $2, $3);",
-				values: [ id, escapedText, createdAt ]
+			const values = {
+				id,
+				text: escapedText,
+				created_at: createdAt
 			}
 
-			await pool.query(query)
+			await knex(this.tableName).insert(values)
 
 			return {
 				ok: true
@@ -308,38 +272,23 @@ class Tweet {
 				throw new Error(errMsg)
 			}
 
-			const filteredTweets = await filterTweetsArray(tweets)
+			const values = []
 
-			if (!filteredTweets.length) {
+			for (let tweet of tweets) {
+				const { id, text, created_at: createdAt } = tweet
+				const result = await this.fetchById(id, true)
+		
+				if (result.error && id && text && createdAt) {
+					values.push(tweet)
+				}
+			}
+
+			if (!values.length) {
 				errMsg = "All tweets were duplicate."
 				throw new Error(errMsg)
 			}
 
-			let values = []
-
-			filteredTweets.forEach(tweet => {
-				values = [...values, ...Object.values(tweet)]
-			})
-
-			let text = "INSERT INTO tweets (id, text, created_at) VALUES"
-			let valuesText = ""
-			let startNum = 1
-			let total = 0
-
-			while (total < filteredTweets.length) {
-				valuesText = valuesText + `($${startNum},$${startNum + 1},$${startNum + 2}),`
-				total++
-				startNum = startNum + 3
-			}
-
-			text = `${text}${valuesText.slice(0, -1)};`
-			
-			const query = {
-				text: text,
-				values: values
-			}
-
-			const insert = await pool.query(query)
+			const insert = await knex(this.tableName).insert(values)
 
 			return {
 				ok: true,

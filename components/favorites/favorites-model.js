@@ -1,19 +1,19 @@
-import pool from "../../config/database.js"
+import knex from "../../config/database.js"
 
 class Favorite {
 	constructor() {
 
 	}
 
+	get tableName() { 
+		return "users_tweets"
+	}
+
 	async fetchByUserId(userId) {
 		let errMsg
 		try {
-			const query = {
-				text: "SELECT t.id as tweet_id, t.text as text FROM tweets t JOIN users_tweets ut ON ut.tweet_id = t.id JOIN users u ON u.id = ut.user_id WHERE ut.user_id = $1;",
-				values: [ userId ]
-			}
 
-			const results = await pool.query(query)
+			const results = await knex.raw("SELECT t.id as tweet_id, t.text as text FROM tweets t JOIN users_tweets ut ON ut.tweet_id = t.id JOIN users u ON u.id = ut.user_id WHERE ut.user_id = ?", [ userId ], "ORDER BY created_at ASC")
 
 			if (!results.rowCount) {
 				errMsg = `No favorites found for user ${userId}.`
@@ -38,12 +38,13 @@ class Favorite {
 	async addFavorite(userId, tweetId) {
 		let errMsg
 		try {
-			const query = {
-				text: "INSERT INTO users_tweets (user_id, tweet_id) VALUES($1, $2);",
-				values: [ userId, tweetId ]
+			//Add validation for tweet and user IDs
+			const values = {
+				user_id: userId,
+				tweet_id: tweetId
 			}
 
-			await pool.query(query)
+			await knex(this.tableName).insert(values)
 
 			return {
 				ok: true
@@ -62,12 +63,10 @@ class Favorite {
 	async removeFavorite(userId, tweetId) {
 		let errMsg
 		try {
-			const query = {
-				text: "DELETE FROM users_tweets WHERE user_id = $1 AND tweet_id = $2;",
-				values: [ userId, tweetId ]
-			}
 
-			await pool.query(query)
+			//Add validation for tweet and user IDs
+
+			await knex(this.tableName).where({"user_id": userId, "tweet_id": tweetId}).del()
 
 			return {
 				ok: true

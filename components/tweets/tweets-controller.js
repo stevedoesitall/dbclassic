@@ -7,7 +7,11 @@ const tweetsController = {
 			
 			if (req.query.text) {
 				data = await new Tweet().fetchByText(req.query.text)
-			} else {
+			} else if (req.query.date) {
+				console.log("BY DATE")
+				data = await new Tweet().fetchByDate(req.query.date)
+			}
+			else {
 				data = await new Tweet().fetchAll()
 			}
 
@@ -35,7 +39,8 @@ const tweetsController = {
 		},
 
 		async byDate(req, res) {
-			const date = req.params.date
+			console.log("BY DATE")
+			const date = req.query.date
 			const data = await new Tweet().fetchByDate(date)
 
 			if (data.error) {

@@ -41,8 +41,8 @@ const usersController = {
 
 	post: {
 		async addOne(req, res) {
-			const { id, userName, password } = req.body
-			const insert = await new User().insertOne(id, userName, password)
+			const { id, values } = req.body
+			const insert = await new User().insertOne(id, values)
 
 			if (insert.error) {
 				return res.status(404).json(insert)
@@ -52,7 +52,7 @@ const usersController = {
 		}
 	},
 
-	put: {
+	patch: {
 		async updateOne(req, res) {
 			const { id, updates } = req.body
 			const update = await new User().updateOne(id, updates)

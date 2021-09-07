@@ -10,28 +10,16 @@ logoutBtn.addEventListener("click", async () => {
 	let errMsg
 
 	try {
-		const userId = location.pathname.substring(9)
-		console.log(userId)
-		const userPutRes = await fetch("/users", {
-			method: "PUT",
+		await fetch("/admin/logout/", {
+			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				id: userId,
-				updates: {
-					loggedIn: false
-				}
-			})
+			}
 		})
 
-		if (userPutRes.status !== 200) {
-			errMsg =
-				"Something went wrong when trying to log out; please try again later."
-			throw new Error(errMsg)
-		}
-
+		localStorage.removeItem("sessionId")
 		location.href = "/"
+
 	} catch (err) {
 		updateLoginMsg(errMsg, "error")
 	}

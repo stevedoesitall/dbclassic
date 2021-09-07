@@ -1,5 +1,4 @@
-import pool from "../../config/database.js"
-import { updateOneUserQB } from "../../utils/query-helpers.js"
+import knex from "../../config/database.js"
 
 class User {
 
@@ -7,22 +6,21 @@ class User {
 
 	}
 
+	get tableName() { 
+		return "users"
+	}
+
 	async fetchAll() {
 		try {
-			const query = {
-				text: "SELECT * FROM users ORDER BY created_at ASC;",
-				values: null
-			}
+			const results = await knex(this.tableName).orderBy("created_at", "ASC")
 
-			const results = await pool.query(query)
-
-			if (!results.rows.length) {
+			if (!results.length) {
 				throw new Error("No results found.")
 			}
 
 			return {
 				ok: true,
-				results: results.rows
+				results: results
 			}
 		} catch (err) {
 			console.log(err)
@@ -38,13 +36,9 @@ class User {
 
 	async fetchById(id) {
 		try {
-			const query = {
-				text: "SELECT * FROM users WHERE id = $1",
-				values: [ id ]
-			}
 
-			const results = await pool.query(query)
-			const result = results.rows[0]
+			const results = await knex(this.tableName).where("id", id)
+			const result = results[0]
 
 			if (!result) {
 				throw new Error(`ID ${id} does not exist on users table.`)
@@ -66,18 +60,15 @@ class User {
 		}
 	}
 
-	async fetchByName(name) {
+	async fetchByName(name, password) {
+		let errMsg
 		try {
-			const query = {
-				text: "SELECT * FROM users WHERE user_name = $1",
-				values: [ name ]
-			}
-
-			const results = await pool.query(query)
-			const result = results.rows[0]
+			const results = await knex(this.tableName).where("user_name", name)
+			const result = results[0]
 
 			if (!result) {
-				throw new Error(`User Name ${name} does not exist on users table.`)
+				errMsg = `User Name ${name} does not exist on users table.`
+				throw new Error(errMsg)
 			}
 
 			return {
@@ -89,17 +80,18 @@ class User {
 			
 			return {
 				ok: false,
-				error: err
+				error: errMsg
 			}
 		} finally {
 			console.log("fetchOne completed on users table")
 		}
 	}
 
-	async insertOne(id, userName, password) {
+	async insertOne(id, values) {
 		let errMsg
 		try {
-			if (!id || !userName || !password) {
+			const { user_name, password } = values
+			if (!id || !user_name || !password) {
 				errMsg = "Missing all required parameters."
 				throw new Error(errMsg)
 			}
@@ -111,15 +103,11 @@ class User {
 				throw new Error(errMsg)
 			}
 
-			const createdAt = new Date().toISOString()
+			values.id = id
+			values.created_at = new Date().toISOString()
 
-			const query = {
-				text: "INSERT INTO users (id, user_name, password, created_at) VALUES($1, $2, $3, $4);",
-				values: [ id, userName, password, createdAt ]
-			}
-
-			await pool.query(query)
-
+			await knex(this.tableName).insert(values)
+			
 			return {
 				ok: true
 			}
@@ -139,12 +127,11 @@ class User {
 		let errMsg
 
 		try {
-			if (!updates || !Object.keys(updates)) {
+
+			if (!updates || !Object.keys(updates).length) {
 				errMsg = "No updates provided."
 				throw new Error(errMsg)
 			}
-
-			const updateKeys = Object.keys(updates)
 
 			const result = await this.fetchById(id)
 
@@ -153,26 +140,28 @@ class User {
 				throw new Error(errMsg)
 			}
 
-			const allowedUpdates = [ "lastPageview", "password", "loggedIn", "userName" ]
-			const updatesCheck = updateKeys.filter(update => allowedUpdates.includes(update))
+			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id" ]
 
-			if (updatesCheck.length !== updateKeys.length) {
-				throw new Error("Invalid update parameters provided.")
+			for (let update in updates) {
+				if (!allowedUpdates.includes(update)) {
+					delete updates[update]
+				}
 			}
 
-			const updateQuery = updateOneUserQB(updates, updateKeys, id)
-
-			const query = {
-				text: updateQuery.text,
-				values: updateQuery.values
+			if (!Object.keys(updates).length) {
+				errMsg = "Invalid update parameters provided."
+				throw new Error(errMsg)
 			}
-			
-			await pool.query(query)
+
+			updates.last_update_date = new Date().toISOString()
+
+			await knex(this.tableName).update(updates).where("id", id)
 
 			return {
 				ok: true,
 				response: {
-					userId: id
+					userId: id,
+					updates: Object.keys(updates)
 				}
 			}
 		} catch (err) {

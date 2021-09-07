@@ -3,7 +3,7 @@ const getUserId = (req, res, next) => {
 
 	if (!userId) {
 		const errJson = {
-			error: "Unauthorized user",
+			error: "Unauthorized user.",
 			ok: false
 		}
 

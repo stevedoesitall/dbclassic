@@ -59,6 +59,7 @@ app.get("*", trackSession, (req, res, next) => next())
 app.use("/tweets", router.tweets)
 app.use("/users", router.users)
 app.use("/favorites", router.favorites)
+app.use("/admin", router.admin)
 app.use("", router.pages)
 
 // cron.schedule("1 0 * * *", async () => await _.insertTweets())
