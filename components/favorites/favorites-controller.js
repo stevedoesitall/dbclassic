@@ -4,8 +4,8 @@ const favoriteController = {
 	get: {
 		async byUserId(req, res) {
 			const userId = req.params.id
-
-			const data = await new Favorite().fetchByUserId(userId)
+			const type = req.query.type || null
+			const data = await new Favorite().fetchByUserId(userId, type)
 
 			if (!data.ok) {
 				return res.status(204).json()

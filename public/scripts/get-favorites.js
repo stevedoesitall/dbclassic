@@ -1,6 +1,6 @@
 (async () => {
 	const sessionId = localStorage.getItem("sessionId")
-	const response = await fetch(`/favorites/${sessionId}`)
+	const response = await fetch(`/favorites/${sessionId}?type=session`)
 
 	if (response.status === 204 || response.status === 404) {
 		return console.log("No tweets.")
