@@ -2,6 +2,7 @@ import User from "../users/users-model.js"
 
 const adminController = {
 	async login(req, res) {
+		console.log("LOGGING IN")
 		const userName = req.body.userName
 		const data = await new User().fetchByName(userName)
 		const userId = data.result.id
@@ -20,7 +21,12 @@ const adminController = {
 		req.session.loginId = userId
 
 		res.cookie("momus_id", userId, cookieObj)
-		const update = await new User().updateOne(userId, "latestSessionId", req.sessionID)
+
+		const updates = {
+			latest_session_id: req.sessionID
+		}
+
+		const update = await new User().updateOne(userId, updates)
 
 		//Throw error if username/password mismatch
 		res.status(200).json({

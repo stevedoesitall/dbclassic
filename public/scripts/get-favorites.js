@@ -1,6 +1,6 @@
 (async () => {
-	const userId = localStorage.getItem("userId")
-	const response = await fetch(`/favorites/${userId}`)
+	const sessionId = localStorage.getItem("sessionId")
+	const response = await fetch(`/favorites/${sessionId}`)
 
 	if (response.status === 204 || response.status === 404) {
 		return console.log("No tweets.")
