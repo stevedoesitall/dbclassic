@@ -1,11 +1,13 @@
 import Favorite from "./favorites-model.js"
+const TABLE_NAME = "users_tweets"
+const favorite = new Favorite(TABLE_NAME)
 
 const favoriteController = {
 	get: {
 		async byUserId(req, res) {
 			const userId = req.params.id
 			const type = req.query.type || null
-			const data = await new Favorite().fetchByUserId(userId, type)
+			const data = await favorite.fetchByUserId(userId, type)
 
 			if (!data.ok) {
 				return res.status(204).json()
@@ -21,7 +23,7 @@ const favoriteController = {
 		async addOne(req, res) {
 			const userId = req.session.loginId || req.body.userId
 			const tweetId = req.body.tweetId
-			const update = await new Favorite().addFavorite(userId, tweetId)
+			const update = await favorite.addFavorite(userId, tweetId)
 			let statusCode = 200
 
 			if (!update.ok) {
@@ -36,7 +38,7 @@ const favoriteController = {
 		async removeOne(req, res) {
 			const userId = req.session.loginId || req.body.userId
 			const tweetId = req.body.tweetId
-			const update = await new Favorite().removeFavorite(userId, tweetId)
+			const update = await favorite.removeFavorite(userId, tweetId)
 			let statusCode = 200
 
 			if (!update.ok) {

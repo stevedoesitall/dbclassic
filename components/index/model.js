@@ -1,13 +1,15 @@
 class Model {
 	constructor(tableName) {
-		this._tableName = tableName
+		this.tableName = tableName
 	}
 
-	get tableName() { 
-		return this._tableName
+	get table() { 
+		return this.tableName
 	}
 
-	//Add setter
+	set table(name) {
+		this.tableName = name
+	}
 }
 
 export default Model

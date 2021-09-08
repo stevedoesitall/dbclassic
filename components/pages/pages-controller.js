@@ -2,9 +2,17 @@ import User from "../users/users-model.js"
 import Tweet from "../tweets/tweets-model.js"
 import Favorite from "../favorites/favorites-model.js"
 
+const USER_TABLE = "users"
+const user = new User(USER_TABLE)
+
+const TWEET_TABLE = "tweets"
+const tweet = new Tweet(TWEET_TABLE)
+
+const FAVORITE_TABLE = "users_tweets"
+const favorite = new Favorite(FAVORITE_TABLE)
+
 const pagesController = {
 	async renderHome(req, res) {
-		const tweet = new Tweet()
 		const userCookies = req.cookies
 		const data = await tweet.fetchDates()
 		const { lastPageview, loggedIn } = req.session
@@ -21,8 +29,17 @@ const pagesController = {
 	},
 
 	async renderTweet(req, res) {
-		const id = req.params.id
-		const data = await new Tweet().fetchById(id)
+		const tweetId = req.params.id
+		const data = await tweet.fetchById(tweetId)
+		const { loggedIn } = req.session
+
+		let isFavorite = false
+
+		if (loggedIn) {
+			const userId = req.session.loginId
+			const result = await favorite.fetchByUserAndTweetIds(userId, tweetId)
+			isFavorite = result.ok
+		}
 		
 		if (data.error) {
 			return res.render("error", {
@@ -31,13 +48,15 @@ const pagesController = {
 		}
 
 		return res.render("tweet", {
-			data: data.result
+			data: data.result,
+			loggedIn,
+			isFavorite
 		})
 	},
 
 	async renderDate(req, res) {
 		const date = req.query.date
-		const data = await new Tweet().fetchByDate(date)
+		const data = await tweet.fetchByDate(date)
 		const userId = req.session.loginId
 		const favorites = []
 		const { loggedIn } = req.session
@@ -51,7 +70,7 @@ const pagesController = {
 		const { rows, prevDate, nextDate, formattedDate } = data.results
 
 		if (userId) {
-			const favoritesData = await new Favorite().fetchByUserId(userId)
+			const favoritesData = await favorite.fetchByUserId(userId)
 
 			if (favoritesData.ok) {
 				favoritesData.results.forEach(tweet => favorites.push(tweet.tweet_id))
@@ -72,9 +91,8 @@ const pagesController = {
 	async renderAccount(req, res) {
 		const userId = req.session.loginId
 	
-		const data = await new User().fetchById(userId)
-		const favorites = await new Favorite().fetchByUserId(userId)
-
+		const data = await user.fetchById(userId)
+		const favorites = await favorite.fetchByUserId(userId)
 		const { result } = data
 
 		res.render("account", {

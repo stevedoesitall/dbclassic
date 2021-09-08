@@ -1,4 +1,6 @@
 import Tweet from "./tweets-model.js"
+const TABLE_NAME = "tweets"
+const tweet = new Tweet(TABLE_NAME)
 
 const tweetsController = {
 	get: {
@@ -6,12 +8,12 @@ const tweetsController = {
 			let data
 			
 			if (req.query.text) {
-				data = await new Tweet().fetchByText(req.query.text)
+				data = await tweet.fetchByText(req.query.text)
 			} else if (req.query.date) {
-				data = await new Tweet().fetchByDate(req.query.date)
+				data = await tweet.fetchByDate(req.query.date)
 			}
 			else {
-				data = await new Tweet().fetchAll()
+				data = await tweet.fetchAll()
 			}
 
 			const results = data.results
@@ -26,7 +28,7 @@ const tweetsController = {
 
 		async byId(req, res) {
 			const id = req.params.id
-			const data = await new Tweet().fetchById(id)
+			const data = await tweet.fetchById(id)
 
 			if (!data.ok) {
 				return res.status(404).json(data)
@@ -39,7 +41,7 @@ const tweetsController = {
 
 		async byDate(req, res) {
 			const date = req.query.date
-			const data = await new Tweet().fetchByDate(date)
+			const data = await tweet.fetchByDate(date)
 
 			if (data.error) {
 				return res.status(404).json(data)
@@ -54,7 +56,7 @@ const tweetsController = {
 	post: {
 		async addOne(req, res) {
 			const { id, text, created_at: createdAt } = req.body
-			const insert = await new Tweet().insertOne(id, text, createdAt)
+			const insert = await tweet.insertOne(id, text, createdAt)
 
 			if (insert.error) {
 				return res.status(404).json(insert)
@@ -65,7 +67,7 @@ const tweetsController = {
 
 		async addMany(req, res) {
 			const tweets = req.body.data
-			const insert = await new Tweet().insertMany(tweets)
+			const insert = await tweet.insertMany(tweets)
 
 			if (insert.error) {
 				return res.status(404).json(insert)

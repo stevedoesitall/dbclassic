@@ -1,8 +1,9 @@
+import crypto from "node:crypto"
+
 import session from "express-session"
 import dotenv from "dotenv"
 import redis from "redis"
 import connectRedis from "connect-redis"
-import { v4 as uuidv4 } from "uuid"
 
 dotenv.config()
 
@@ -12,7 +13,7 @@ const client = redis.createClient(process.env.REDIS_URL)
 const sessionObj = {
 	name: "momus_session",
 	genid: () => {
-		return uuidv4()
+		return crypto.randomUUID()
 	},
 	secret: process.env.SESSION_SECRET,
 	resave: false,

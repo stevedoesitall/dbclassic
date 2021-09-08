@@ -1,10 +1,11 @@
 import User from "./users-model.js"
+const TABLE_NAME = "users"
+const user = new User(TABLE_NAME)
 
 const usersController = {
 	get: {
 		async all(req, res) {
-			const data = await new User().fetchAll()
-
+			const data = await user.fetchAll()
 			const { results } = data
 
 			if (!results.length) {
@@ -16,7 +17,7 @@ const usersController = {
 
 		async byId(req, res) {
 			const id = req.params.id
-			const data = await new User().fetchById(id)
+			const data = await user.fetchById(id)
 			
 			if (data.error) {
 				return res.status(404).json(data)
@@ -29,7 +30,7 @@ const usersController = {
 
 		async byName(req, res) {
 			const name = req.params.name
-			const data = await new User().fetchByName(name)
+			const data = await user.fetchByName(name)
 
 			if (data.error) {
 				return res.status(404).json(data)
@@ -42,7 +43,7 @@ const usersController = {
 	post: {
 		async addOne(req, res) {
 			const { id, values } = req.body
-			const insert = await new User().insertOne(id, values)
+			const insert = await user.insertOne(id, values)
 
 			if (insert.error) {
 				return res.status(404).json(insert)
@@ -55,7 +56,7 @@ const usersController = {
 	patch: {
 		async updateOne(req, res) {
 			const { id, updates } = req.body
-			const update = await new User().updateOne(id, updates)
+			const update = await user.updateOne(id, updates)
 
 			if (update.error) {
 				return res.status(404).json({

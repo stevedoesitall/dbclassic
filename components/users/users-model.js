@@ -2,14 +2,13 @@ import knex from "../../config/database.js"
 import Model from "../index/model.js"
 
 class User extends Model {
-	constructor(tableName = "users") {
+	constructor(tableName) {
 		super(tableName)
 	}
-
 	async fetchAll() {
 		try {
 			const results = await knex(this.tableName).orderBy("created_at", "ASC")
-
+			
 			if (!results.length) {
 				throw new Error("No results found.")
 			}

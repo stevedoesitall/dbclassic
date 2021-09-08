@@ -14,7 +14,7 @@ const THIRTY_MINUTES = 1800
 client.get = util.promisify(client.get)
 
 class Tweet extends Model {
-	constructor(tableName = "tweets") {
+	constructor(tableName) {
 		super(tableName)
 	}
 
@@ -106,7 +106,7 @@ class Tweet extends Model {
 		try {
 			const formattedDate = formatDateStr(date)
 			const results = await knex(this.tableName).whereRaw("TO_CHAR(created_at AT TIME ZONE 'GMT-05:00 DST', 'YYYY-MM-DD') = ?", [ date ]).orderBy("created_at", "asc")
-		
+
 			if (!results.length) {
 				errMsg = `No tweet found from this date: ${date}. Kinda concering?`
 				throw new Error(errMsg)

@@ -3,6 +3,16 @@
 	<h2>Tweet Page</h2>
 	<p><a href="https://twitter.com/DadBoner/status/{{data.id}}">{{data.date}} @ {{data.time}}</a></p>
 	<p>{{data.text}}</p>
+	
+	{{#if loggedIn}}
+		<button class="favorite-button is-fav-{{isFavorite}}" id="fav-{{data.id}}">
+			{{#if isFavorite}}
+				Remove Favorite
+			{{else}}
+				Add Favorite
+			{{/if}}
+		</button>
+	{{/if}}
 </div>
 
 <div id="footer-links">
@@ -13,3 +23,5 @@
 		<p><a href="/tweet/{{data.nextTweet}}">Next</a></p>
 	{{/if}}
 </div>
+
+<script src="../scripts/set-favorite.js"></script>

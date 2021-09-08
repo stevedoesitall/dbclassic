@@ -1,5 +1,8 @@
 import User from "../components/users/users-model.js"
 
+const USER_TABLE = "users"
+const user = new User(USER_TABLE)
+
 const updateLastPageview = async (req, res, next) => {
 	const date = req.query.date
 	if (date) {
@@ -7,7 +10,6 @@ const updateLastPageview = async (req, res, next) => {
 		const userSession = req.session
 		if (userCookies.momus_id === userSession.loginId) {
 			try {
-				const user = new User()
 				const updates = {
 					last_pageview: date
 				}
