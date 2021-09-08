@@ -38,5 +38,4 @@ loginBtn.addEventListener("click", async () => {
 		console.log("Throwing error", errMsg)
 		updateLoginMsg(errMsg, "error")
 	}
-
 })

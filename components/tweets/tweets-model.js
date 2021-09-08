@@ -4,6 +4,7 @@ import redis from "redis"
 import knex from "../../config/database.js"
 import { formatDateStr, formatTime } from "../../utils/format-date-time.js"
 import getLinkedTweets from "../../utils/get-dll.js"
+import Model from "../index/model.js"
 
 dotenv.config()
 
@@ -12,14 +13,9 @@ const THIRTY_MINUTES = 1800
 
 client.get = util.promisify(client.get)
 
-class Tweet {
-
-	constructor() {
-	
-	}
-
-	get tableName() { 
-		return "tweets"
+class Tweet extends Model {
+	constructor(tableName = "tweets") {
+		super(tableName)
 	}
 
 	async fetchById(id, postCheck = false) {

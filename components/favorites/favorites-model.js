@@ -1,13 +1,10 @@
 import knex from "../../config/database.js"
 import User from "../users/users-model.js"
+import Model from "../index/model.js"
 
-class Favorite {
-	constructor() {
-
-	}
-
-	get tableName() { 
-		return "users_tweets"
+class Favorite extends Model {
+	constructor(tableName = "users_tweets") {
+		super(tableName)
 	}
 
 	async fetchByUserId(id, type = "user") {

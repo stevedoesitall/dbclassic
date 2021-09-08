@@ -1,13 +1,9 @@
 import knex from "../../config/database.js"
+import Model from "../index/model.js"
 
-class User {
-
-	constructor() {
-
-	}
-
-	get tableName() { 
-		return "users"
+class User extends Model {
+	constructor(tableName = "users") {
+		super(tableName)
 	}
 
 	async fetchAll() {

@@ -1,6 +1,6 @@
-import User from "../components/users/users-model.js"
-import Tweet from "../components/tweets/tweets-model.js"
-import Favorite from "../components/favorites/favorites-model.js"
+import User from "../users/users-model.js"
+import Tweet from "../tweets/tweets-model.js"
+import Favorite from "../favorites/favorites-model.js"
 
 const pagesController = {
 	async renderHome(req, res) {
@@ -70,13 +70,17 @@ const pagesController = {
 	},
 
 	async renderAccount(req, res) {
-		const user = new User()
-		const data = await user.fetchById(req.session.loginId)
-		
+		const userId = req.session.loginId
+	
+		const data = await new User().fetchById(userId)
+		const favorites = await new Favorite().fetchByUserId(userId)
+
 		const { result } = data
 
 		res.render("account", {
-			userName: result.user_name
+			userName: result.user_name,
+			favorites: favorites.results ? favorites.results : null,
+			hasFavorites: favorites.results ? true : false
 		})
 	},
 

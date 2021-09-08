@@ -9,7 +9,7 @@ import session from "express-session"
 
 import accessLogStream from "../config/log.js"
 import sessionObj from "../config/session.js"
-import router from "../utils/get-routes.js"
+import router from "../components/index/router.js"
 import trackSession from "../middleware/track-session.js"
 // import _ from "./utils/index.js"
 

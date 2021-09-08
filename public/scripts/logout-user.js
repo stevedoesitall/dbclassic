@@ -10,12 +10,19 @@ logoutBtn.addEventListener("click", async () => {
 	let errMsg
 
 	try {
-		await fetch("/admin/logout/", {
+		const response = await fetch("/admin/logout/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
 			}
 		})
+
+		const data = await response.json()
+
+		if (!data.ok) {
+			errMsg = data.error
+			throw new Error(errMsg)
+		}
 
 		localStorage.removeItem("sessionId")
 		location.href = "/"

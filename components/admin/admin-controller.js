@@ -29,6 +29,7 @@ const adminController = {
 
 		//Throw error if username/password mismatch
 		res.status(200).json({
+			ok: true,
 			sessionId: req.sessionID
 		})
 	},
@@ -42,7 +43,6 @@ const adminController = {
 					error: "Something went wrong when trying to log out; please try again later."
 				})
 			} else {
-				console.log("Success")
 				res.clearCookie("momus_id")
 				return res.status(200).json({
 					ok: true
