@@ -6,13 +6,13 @@ const auth = async (req, res, next) => {
 
 	try {
 		if (!req.session.loginId && currentPath === "account") {
-			redirectPage = "login"
+			redirectPage = "/login"
 			errMsg = "Unauthenticated user."
 			throw new Error(errMsg)
 		}
 
 		if (req.session.loginId && currentPath === "login") {
-			redirectPage = "account"
+			redirectPage = "/account"
 			errMsg = "User already logged in."
 			throw new Error(errMsg)
 		}
