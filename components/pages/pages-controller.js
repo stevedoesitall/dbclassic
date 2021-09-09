@@ -23,8 +23,7 @@ const pagesController = {
 			lastPageview,
 			loggedIn,
 			yearHeaders,
-			allDates,
-			userId: userCookies.momus_id ? userCookies.momus_id : null
+			allDates
 		})
 	},
 

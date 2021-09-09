@@ -1,8 +1,11 @@
 import fetch from "node-fetch"
 import nodemailer from "nodemailer"
-import Tweet from "../../models/Tweet.js"
 
-import { mailCreds, twitterCreds } from "../config/credentials.js"
+import Tweet from "../../models/Tweet.js"
+import { mailCreds, twitterCreds } from "../../config/credentials.js"
+
+const TWEET_TABLE = "tweets"
+const tweet = new Tweet(TWEET_TABLE)
 
 const insertTweets = async () => {
 	const USER_ID = "133110529"
@@ -42,7 +45,6 @@ const insertTweets = async () => {
 			throw new Error(message)
 		}
 
-		const tweet = new Tweet()
 		const data = results.data
 
 		if (resultCount > 1) {

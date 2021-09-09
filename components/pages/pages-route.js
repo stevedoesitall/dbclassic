@@ -7,11 +7,11 @@ import pagesController from "./pages-controller.js"
 const router = Router()
 
 router.get("/", checkLogin, pagesController.renderHome)
-router.get("/account/:id", auth, pagesController.renderAccount)
+router.get("/account", auth, pagesController.renderAccount)
 router.get("/tweet/", updateLastPageview, pagesController.renderDate)
 router.get("/tweet/:id", pagesController.renderTweet)
 router.get("/search", pagesController.renderSearch)
-router.get("/login", pagesController.renderLogin)
+router.get("/login", auth, pagesController.renderLogin)
 router.get("*", pagesController.renderError)
 
 export { router as pagesRouter }

@@ -1,9 +1,7 @@
 import dotenv from "dotenv"
 import pkg from "knex"
 
-dotenv.config({
-	path: "../.env"
-})
+dotenv.config()
 
 const enviornment = process.env.NODE_ENV
 
@@ -45,11 +43,6 @@ if (enviornment === "development") {
 	connection = stagingCreds
 } else {
 	connection = prodCreds
-}
-
-connection.pool = {
-	min: 2,
-	max: 10
 }
 
 const dbConfig = {

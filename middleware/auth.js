@@ -1,19 +1,26 @@
 const auth = async (req, res, next) => {
+	const currentPath = req.route.path.substring(1)
+	
+	let redirectPage
 	let errMsg
 
 	try {
-		const authorized = (req.params.id === req.session.loginId) && req.cookies.momus_id
+		if (!req.session.loginId && currentPath === "account") {
+			redirectPage = "login"
+			errMsg = "Unauthenticated user."
+			throw new Error(errMsg)
+		}
 
-		if (!authorized) {
-			errMsg = "You don't have permission to access this page."
+		if (req.session.loginId && currentPath === "login") {
+			redirectPage = "account"
+			errMsg = "User already logged in."
 			throw new Error(errMsg)
 		}
 
 		next()
 	} catch (err) {
-		return res.render("error", {
-			errMsg: errMsg
-		})
+		console.log(errMsg)
+		return res.redirect(redirectPage)
 	}
 }
 
