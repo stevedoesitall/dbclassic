@@ -7,16 +7,17 @@ const adminController = {
 	async login(req, res) {
 		const userName = req.body.userName
 		const data = await user.fetchByName(userName)
-		const userId = data.result.id
-		const cookieObj = {
-			sameSite: "strict",
-			httpOnly: true
-		}
 
 		if (!data.ok) {
 			return res.status(401).json({
 				error: "Unathorized user."
 			})
+		}
+
+		const userId = data.result.id
+		const cookieObj = {
+			sameSite: "strict",
+			httpOnly: true
 		}
 
 		req.session.loggedIn = true

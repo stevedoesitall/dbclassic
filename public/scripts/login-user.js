@@ -18,7 +18,7 @@ loginBtn.addEventListener("click", async () => {
 	let errMsg
 
 	try {
-		const loginUser = await fetch("/admin/login/", {
+		const response = await fetch("/admin/login/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -28,14 +28,22 @@ loginBtn.addEventListener("click", async () => {
 			})
 		})
 
-		const loginUserRes = await loginUser.json()
-		const sessionId = loginUserRes.sessionId
+		if (!response.ok) {
+			let errMsg
+			if (response.status === 401) {
+				errMsg = "Username does not exist."
+			}
+
+			throw new Error(errMsg)
+		}
+
+		const data = response.json()
+		const sessionId = data.sessionId
 
 		localStorage.setItem("sessionId", sessionId)
 		updateLoginMsg(successMsg, "success")
 
 	} catch (err) {
-		console.log("Throwing error", errMsg)
-		updateLoginMsg(errMsg, "error")
+		updateLoginMsg(err, "error")
 	}
 })
