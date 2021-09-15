@@ -14,8 +14,12 @@ const THIRTY_MINUTES = 1800
 client.get = util.promisify(client.get)
 
 class Tweet extends Model {
-	constructor(tableName) {
-		super(tableName)
+	constructor() {
+		super()
+	}
+
+	get tableName() { 
+		return "tweets"
 	}
 
 	async fetchById(id, postCheck = false) {

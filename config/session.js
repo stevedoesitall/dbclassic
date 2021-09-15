@@ -8,18 +8,20 @@ dotenv.config()
 
 const RedisStore = connectRedis(session)
 const client = redis.createClient(process.env.REDIS_URL)
+const oneMonth = 30 * 24 * 60 * 60 * 1000
 
 const sessionObj = {
 	name: "momus_session",
 	genid: () => {
-		return crypto.randomUUID()
+		const uuid = crypto.randomUUID()
+		return uuid
 	},
 	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: true,
+	resave: true,
+	saveUninitialized: false,
 	cookie: {
 		sameSite: true,
-		maxAge: 30 * 24 * 60 * 60 * 1000
+		maxAge: oneMonth
 	},
 	store: new RedisStore({
 		client: client

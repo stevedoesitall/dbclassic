@@ -1,6 +1,5 @@
 import { Router } from "express"
 import usersController from "./users-controller.js"
-import setCookie from "../../middleware/set-cookie.js"
 
 const router = Router()
 
@@ -10,6 +9,6 @@ router.get("/", usersController.get.all)
 
 router.post("/", usersController.post.addOne)
 
-router.patch("/", setCookie, usersController.patch.updateOne)
+router.patch("/", usersController.patch.updateOne)
 
 export { router as usersRouter }

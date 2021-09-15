@@ -1,6 +1,6 @@
 import User from "./users-model.js"
-const TABLE_NAME = "users"
-const user = new User(TABLE_NAME)
+
+const user = new User()
 
 const usersController = {
 	get: {

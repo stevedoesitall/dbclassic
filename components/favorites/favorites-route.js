@@ -1,6 +1,5 @@
 import { Router } from "express"
 import favoriteController from "./favorites-controller.js"
-import getUserId from "../../middleware/get-user-id.js"
 
 const router = Router()
 

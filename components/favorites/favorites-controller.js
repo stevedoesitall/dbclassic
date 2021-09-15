@@ -1,6 +1,6 @@
 import Favorite from "./favorites-model.js"
-const TABLE_NAME = "users_tweets"
-const favorite = new Favorite(TABLE_NAME)
+
+const favorite = new Favorite()
 
 const favoriteController = {
 	get: {

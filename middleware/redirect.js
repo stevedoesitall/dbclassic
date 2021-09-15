@@ -1,4 +1,4 @@
-const auth = async (req, res, next) => {
+const redirect = async (req, res, next) => {
 	const currentPath = req.route.path.substring(1)
 	
 	let redirectPage
@@ -24,4 +24,4 @@ const auth = async (req, res, next) => {
 	}
 }
 
-export default auth
+export default redirect

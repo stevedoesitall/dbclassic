@@ -1,10 +1,16 @@
 import knex from "../../config/database.js"
 import Model from "../index/model.js"
+import validator from "../index/schemas.js"
 
 class User extends Model {
-	constructor(tableName) {
-		super(tableName)
+	constructor() {
+		super()
 	}
+
+	get tableName() { 
+		return "users"
+	}
+
 	async fetchAll() {
 		try {
 			const results = await knex(this.tableName).orderBy("created_at", "ASC")
@@ -111,12 +117,6 @@ class User extends Model {
 	async insertOne(id, values) {
 		let errMsg
 		try {
-			const { user_name, password } = values
-			if (!id || !user_name || !password) {
-				errMsg = "Missing all required parameters."
-				throw new Error(errMsg)
-			}
-
 			const result = await this.fetchById(id)
 
 			if (!result.error) {
@@ -126,7 +126,22 @@ class User extends Model {
 
 			values.id = id
 			values.created_at = new Date().toISOString()
+			
+			for (let key in values) {
+				const value = values[key]
+				const isValid = validator(key, value, this.tableName)
+				if (!isValid) {
+					delete values[key]
+				}
+			}
 
+			const { user_name, password } = values
+
+			if (!id || !user_name || !password) {
+				errMsg = "Missing all required parameters."
+				throw new Error(errMsg)
+			}
+			
 			await knex(this.tableName).insert(values)
 			
 			return {
@@ -144,12 +159,12 @@ class User extends Model {
 		}
 	}
 
-	async updateOne(id, updates) {
+	async updateOne(id, values) {
 		let errMsg
 
 		try {
 
-			if (!updates || !Object.keys(updates).length) {
+			if (!values || !Object.keys(values).length) {
 				errMsg = "No updates provided."
 				throw new Error(errMsg)
 			}
@@ -163,26 +178,28 @@ class User extends Model {
 
 			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id" ]
 
-			for (let update in updates) {
-				if (!allowedUpdates.includes(update)) {
-					delete updates[update]
+			for (let key in values) {
+				const value = values[key]
+				const isValid = validator(key, value, this.tableName)
+				if (!allowedUpdates.includes(key) || !isValid) {
+					delete values[key]
 				}
 			}
 
-			if (!Object.keys(updates).length) {
+			if (!Object.keys(values).length) {
 				errMsg = "Invalid update parameters provided."
 				throw new Error(errMsg)
 			}
 
-			updates.last_update_date = new Date().toISOString()
+			values.last_update_date = new Date().toISOString()
 
-			await knex(this.tableName).update(updates).where("id", id)
+			await knex(this.tableName).update(values).where("id", id)
 
 			return {
 				ok: true,
 				response: {
 					userId: id,
-					updates: Object.keys(updates)
+					updates: Object.keys(values)
 				}
 			}
 		} catch (err) {

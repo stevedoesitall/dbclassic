@@ -2,8 +2,12 @@ import knex from "../../config/database.js"
 import Model from "../index/model.js"
 
 class Favorite extends Model {
-	constructor(tableName) {
-		super(tableName)
+	constructor() {
+		super()
+	}
+
+	get tableName() { 
+		return "users_tweets"
 	}
 
 	async fetchByUserId(id) {

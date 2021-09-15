@@ -2,18 +2,12 @@ import User from "../users/users-model.js"
 import Tweet from "../tweets/tweets-model.js"
 import Favorite from "../favorites/favorites-model.js"
 
-const USER_TABLE = "users"
-const user = new User(USER_TABLE)
-
-const TWEET_TABLE = "tweets"
-const tweet = new Tweet(TWEET_TABLE)
-
-const FAVORITE_TABLE = "users_tweets"
-const favorite = new Favorite(FAVORITE_TABLE)
+const user = new User()
+const tweet = new Tweet()
+const favorite = new Favorite()
 
 const pagesController = {
 	async renderHome(req, res) {
-		const userCookies = req.cookies
 		const data = await tweet.fetchDates()
 		const { lastPageview, loggedIn } = req.session
 		const { allDates, yearHeaders } = data.results

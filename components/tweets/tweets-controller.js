@@ -1,6 +1,5 @@
 import Tweet from "./tweets-model.js"
-const TABLE_NAME = "tweets"
-const tweet = new Tweet(TABLE_NAME)
+const tweet = new Tweet()
 
 const tweetsController = {
 	get: {
