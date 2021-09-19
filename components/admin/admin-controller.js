@@ -1,7 +1,10 @@
 import crypto from "node:crypto"
 import bcrypt from "bcrypt"
+import dotenv from "dotenv"
 import transporter from "../../config/mail-creds.js"
 import User from "../users/users-model.js"
+
+dotenv.config()
 
 const user = new User()
 const SALT_ROUNDS = 10
@@ -128,7 +131,7 @@ const adminController = {
 			from: "momusio@yahoo.com",
 			to: "stephenagiordano@gmail.com",
 			subject: "Account verification for Momus.io",
-			text: `Verify signup for ${userName}. Click here: http://localhost:8084/verify/${token}`
+			text: `Verify signup for ${userName}. Click here: ${process.env.BASE_URL}/verify/${token}`
 		}
 		
 		transporter.sendMail(mailOptions, (err, res) => {

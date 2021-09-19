@@ -17,7 +17,6 @@ const pagesController = {
 		if (req.session.loginId) {
 			const userId = req.session.loginId
 			const data = await user.fetchById(userId)
-			console.log(data)
 			isVerified = data.result.is_verified
 		}
 
@@ -37,7 +36,6 @@ const pagesController = {
 		if (req.session.loginId) {
 			const userId = req.session.loginId
 			const data = await user.fetchById(userId)
-			console.log(data)
 			isVerified = data.result.is_verified
 		}
 
@@ -73,7 +71,6 @@ const pagesController = {
 		if (req.session.loginId) {
 			const userId = req.session.loginId
 			const data = await user.fetchById(userId)
-			console.log(data)
 			isVerified = data.result.is_verified
 		}
 
