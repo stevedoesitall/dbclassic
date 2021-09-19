@@ -11,17 +11,36 @@ const pagesController = {
 		const data = await tweet.fetchDates()
 		const { lastPageview, loggedIn } = req.session
 		const { allDates, yearHeaders } = data.results
+		
+		let isVerified = false
+
+		if (req.session.loginId) {
+			const userId = req.session.loginId
+			const data = await user.fetchById(userId)
+			console.log(data)
+			isVerified = data.result.is_verified
+		}
 
 		res.render("index", {
 			message: "Really lookin' forward to the weekend, you guys.",
 			lastPageview,
 			loggedIn,
 			yearHeaders,
-			allDates
+			allDates,
+			isVerified
 		})
 	},
 
 	async renderTweet(req, res) {
+		let isVerified = false
+
+		if (req.session.loginId) {
+			const userId = req.session.loginId
+			const data = await user.fetchById(userId)
+			console.log(data)
+			isVerified = data.result.is_verified
+		}
+
 		const tweetId = req.params.id
 		const data = await tweet.fetchById(tweetId)
 		const { loggedIn } = req.session
@@ -43,11 +62,21 @@ const pagesController = {
 		return res.render("tweet", {
 			data: data.result,
 			loggedIn,
-			isFavorite
+			isFavorite,
+			isVerified
 		})
 	},
 
 	async renderDate(req, res) {
+		let isVerified = false
+
+		if (req.session.loginId) {
+			const userId = req.session.loginId
+			const data = await user.fetchById(userId)
+			console.log(data)
+			isVerified = data.result.is_verified
+		}
+
 		const date = req.query.date
 		const data = await tweet.fetchByDate(date)
 		const userId = req.session.loginId
@@ -77,7 +106,8 @@ const pagesController = {
 			prevDate: prevDate,
 			nextDate: nextDate,
 			date: formattedDate,
-			loggedIn
+			loggedIn,
+			isVerified
 		})
 	},
 
@@ -95,12 +125,21 @@ const pagesController = {
 		})
 	},
 
+	async renderVerify(req, res) {
+		console.log(req.params.id)
+		res.render("verify")
+	},
+
 	async renderSearch(req, res) {
 		res.render("search")
 	},
 
 	async renderLogin(req, res) {
 		res.render("login")
+	},
+
+	async renderSignup(req, res) {
+		res.render("signup")
 	},
 
 	async renderError(req, res) {

@@ -13,6 +13,15 @@
 	display: none;
 }
 
+.input-container {
+	display: block;
+	margin-bottom: 2em;
+}
+
+.required {
+	border-color: var(--danger);
+}
+
 .sticky {
 	position: -webkit-sticky; /* Safari */
 	position: sticky;
@@ -34,6 +43,7 @@ h3 {
 	font-family: var(--sans-serif-font);
 }
 
+label,
 li,
 p {
 	font-family: var(--serif-font);

@@ -19,8 +19,10 @@ const validator = (key, value, tableName) => {
 					(typeof value === table[key].type && table[key].type !== "date") || 
 					(table[key].type == "date" && new Date(value).getTime() > 0)
 				)
-				&& value.length >= table[key].minLength
-				&& value.length <= table[key].maxLength
+				&& (
+					(value.length >= table[key].minLength && value.length <= table[key].maxLength)
+					|| typeof value === "boolean"
+				)
 			)
 		) {
 			return true

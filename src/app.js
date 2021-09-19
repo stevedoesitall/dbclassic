@@ -1,5 +1,6 @@
-import path from "path"
+import path from "node:path"
 // import cron from "node-cron"
+import cors from "cors"
 import dotenv from "dotenv"
 import express from "express"
 import exphbs from "express-handlebars"
@@ -26,6 +27,7 @@ const viewsPath = path.join(__dirname, "./views")
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors())
 
 app.use(morgan("combined", {
 	skip: (req, res) => {

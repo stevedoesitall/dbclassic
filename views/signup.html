@@ -1,0 +1,44 @@
+<div id="main-content">
+	<p><a href="/">Home</a></p>
+	<h2>Sign Up Here</h2>
+
+	<section id="signup-inputs">
+		<div class="input-container">
+			<input placeholder="Username" id="user-name-input" type="text" />
+			<p id="user-name-message" class="hidden"></p>
+		</div>
+	
+		<div class="input-container">
+			<input placeholder="Password" class="password-input" id="password-input-1" type="password" />
+			<button class="show-password-button">Show</button>
+		</div>
+
+		<div class="input-container">
+			<input placeholder="Confirm Password" class="password-input" id="password-input-2" type="password" />
+			<button class="show-password-button">Show</button>
+			<p id="password-message" class="hidden"></p>
+		</div>
+	</section>
+
+	<section id="password-requirements">
+		<p id="pass-header">Password Requirements:</p>
+		<ul id="password-list">
+			<li id="pass-len" class="pass-req">Between 8 and 40 characters</li>
+			<li id="pass-lower" class="pass-req">At least one lowercase character</li>
+			<li id="pass-upper" class="pass-req">At least one uppercase character</li>
+			<li id="pass-num" class="pass-req">At least one number</li>
+			<li id="pass-spec" class="pass-req">At least one special character (@, &, $, !, #, ?)</li>
+			<!-- <li id="pass-match" class="pass-req">Passwords must match</li> -->
+		</ul>
+	</section>
+
+	<div id="status-container" class="hidden">
+		<p class="emphasis error" id="signup-msg"></p>
+	</div>
+
+	<div id="signup-container">
+		<button id="signup-button" class="cta-button" disabled>Sign Up</button>
+	</div>
+</div>
+
+<script src="../scripts/signup-user.js"></script>

@@ -1,0 +1,7 @@
+<header>
+    {{#if loggedIn}}
+        {{#unless isVerified}}
+            <p class="error">Your account is unverified. Some functionality will be limited.</p>
+        {{/unless}}
+    {{/if}}
+</header>

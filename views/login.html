@@ -1,14 +1,24 @@
 <div id="main-content">
 	<p><a href="/">Home</a></p>
-	<h2>Log In here</h2>
-	<input id="user-name-input" type="text" />
+	<h2>Log In Here</h2>
 
-	<div id="login-container" class="hidden">
+	<section id="login-inputs">
+		<div class="input-container">
+			<input placeholder="Username" id="user-name-input" type="text" />	
+		</div>
+	
+		<div class="input-container">
+			<input placeholder="Password" id="password-input" type="password" />
+		</div>
+	</section>
+
+	<div id="status-container" class="hidden">
 		<p class="emphasis" id="login-msg"></p>
 	</div>
 
-	<div id="button-container">
-		<p class="button"><a id="login-button" href="#">Log In</a></p>
+	<div id="login-container">
+		<button id="login-button" class="cta-button">Log In</button>
+		<p class="link">Don't have an account? <a id="signup-link" href="/signup">Sign up here.</a></p>
 	</div>
 </div>
 

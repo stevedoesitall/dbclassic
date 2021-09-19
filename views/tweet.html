@@ -5,13 +5,15 @@
 	<p>{{data.text}}</p>
 	
 	{{#if loggedIn}}
-		<button class="favorite-button is-fav-{{isFavorite}}" id="fav-{{data.id}}">
-			{{#if isFavorite}}
-				Remove Favorite
-			{{else}}
-				Add Favorite
-			{{/if}}
-		</button>
+		{{#if isVerified}}
+			<button class="favorite-button is-fav-{{isFavorite}}" id="fav-{{data.id}}">
+				{{#if isFavorite}}
+					Remove Favorite
+				{{else}}
+					Add Favorite
+				{{/if}}
+			</button>
+		{{/if}}
 	{{/if}}
 </div>
 

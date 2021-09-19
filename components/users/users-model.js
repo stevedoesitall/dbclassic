@@ -61,6 +61,32 @@ class User extends Model {
 		}
 	}
 
+	async fetchByToken(token) {
+		try {
+
+			const results = await knex(this.tableName).where("token", token)
+			const result = results[0]
+
+			if (!result) {
+				throw new Error(`Token ${token} does not exist on users table.`)
+			}
+
+			return {
+				ok: true,
+				result
+			}
+		} catch (err) {
+			console.log(err)
+			
+			return {
+				ok: false,
+				error: err
+			}
+		} finally {
+			console.log("fetchById completed on users table")
+		}
+	}
+
 	async fetchBySession(session) {
 		try {
 
@@ -87,11 +113,11 @@ class User extends Model {
 		}
 	}
 
-	async fetchByName(name, password) {
+	async fetchByName(name) {
 		let errMsg
 		try {
-			const results = await knex(this.tableName).where("user_name", name)
-			const result = results[0]
+			const results = await knex.raw("SELECT * FROM users WHERE LOWER(user_name) = ?;", [ name.toLowerCase() ])
+			const result = results.rows[0]
 
 			if (!result) {
 				errMsg = `User Name ${name} does not exist on users table.`
@@ -117,6 +143,7 @@ class User extends Model {
 	async insertOne(id, values) {
 		let errMsg
 		try {
+			//Note: Check name too
 			const result = await this.fetchById(id)
 
 			if (!result.error) {
@@ -126,7 +153,9 @@ class User extends Model {
 
 			values.id = id
 			values.created_at = new Date().toISOString()
-			
+			values.is_admin = false
+			values.is_verified = false
+
 			for (let key in values) {
 				const value = values[key]
 				const isValid = validator(key, value, this.tableName)
@@ -136,19 +165,19 @@ class User extends Model {
 			}
 
 			const { user_name, password } = values
-
+			console.log("ID", password)
 			if (!id || !user_name || !password) {
 				errMsg = "Missing all required parameters."
 				throw new Error(errMsg)
 			}
 			
 			await knex(this.tableName).insert(values)
-			
+
 			return {
 				ok: true
 			}
 		} catch (err) {
-			console.log(errMsg)
+			console.log(err)
 			
 			return {
 				ok: false,
@@ -176,7 +205,7 @@ class User extends Model {
 				throw new Error(errMsg)
 			}
 
-			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id" ]
+			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id", "is_verified", "token", "token_time" ]
 
 			for (let key in values) {
 				const value = values[key]

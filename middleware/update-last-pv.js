@@ -12,6 +12,8 @@ const updateLastPageview = async (req, res, next) => {
 					last_pageview: date
 				}
 				await user.updateOne(userSession.loginId, updates)
+				
+				req.session.lastPageview = date
 			} catch (err) {
 				console.log(err)
 			}

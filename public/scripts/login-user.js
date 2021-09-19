@@ -1,15 +1,16 @@
 const loginBtn = document.querySelector("#login-button")
 const userNameInput = document.querySelector("#user-name-input")
+const passwordInput = document.querySelector("#password-input")
 const loginMsg = document.querySelector("#login-msg")
 
 const updateLoginMsg = (msg, status) => {
 	loginMsg.textContent = msg
 	loginMsg.classList.add(status)
-	document.querySelector("#login-container").classList.remove("hidden")
+	document.querySelector("#status-container").classList.remove("hidden")
 
 	if (status === "success") {
-		document.querySelector("#button-container").classList.add("hidden")
-		userNameInput.classList.add("hidden")
+		document.querySelector("#login-inputs").classList.add("hidden")
+		document.querySelector("#login-container").classList.add("hidden")
 	}
 }
 
@@ -24,13 +25,15 @@ loginBtn.addEventListener("click", async () => {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				userName: userNameInput.value
+				userName: userNameInput.value,
+				password: passwordInput.value
 			})
 		})
 
 		if (!response.ok) {
-			let errMsg
 			if (response.status === 401) {
+				errMsg = "Incorrect password."
+			} else if (response.status === 404) {
 				errMsg = "Username does not exist."
 			}
 
