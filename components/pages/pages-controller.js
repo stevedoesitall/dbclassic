@@ -18,8 +18,11 @@ const pagesController = {
 		if (req.session.loginId) {
 			const userId = req.session.loginId
 			const data = await user.fetchById(userId)
-			isVerified = data.result.is_verified
-			lastPageview = data.result.last_pageview
+
+			if (data.ok) {
+				isVerified = data.result.is_verified
+				lastPageview = data.result.last_pageview
+			}
 		}
 
 		res.render("index", {
