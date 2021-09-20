@@ -8,5 +8,6 @@ router.get("/user", adminController.checkName)
 router.post("/signup", adminController.signup)
 router.post("/login", adminController.login)
 router.post("/logout", adminController.logout)
+router.post("/delete", adminController.delete)
 
 export { router as adminRouter }

@@ -3,10 +3,12 @@ import bcrypt from "bcrypt"
 import dotenv from "dotenv"
 import transporter from "../../config/mail-creds.js"
 import User from "../users/users-model.js"
+import Favorite from "../favorites/favorites-model.js"
 
 dotenv.config()
 
 const user = new User()
+const favorite = new Favorite()
 const SALT_ROUNDS = 10
 
 const adminController = {
@@ -84,7 +86,37 @@ const adminController = {
 	},
 
 	async delete(req, res) {
+		let errMsg
 		//Note to delete references to the users_tweets table too
+		try {
+			const userId = req.session.loginId
+
+			if (!userId) {
+				errMsg = "No user ID found."
+				throw new Error(errMsg)
+			}
+
+			await favorite.deleteByUserId(userId)
+			await user.deleteOne(userId)
+
+			req.session.destroy((err) => {
+				if (err) {
+					console.log(err)
+				}
+			})
+
+			return res.status(200).json({
+				ok: true
+			})
+
+		} catch(err) {
+			console.log(err)
+			return {
+				ok: false,
+				error: errMsg
+			}
+		}
+
 	},
 
 	async signup(req, res) {

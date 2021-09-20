@@ -134,6 +134,28 @@ class Favorite extends Model {
 			console.log("removeFavorite completed on the users_tweets table")
 		}
 	}
+
+	async deleteByUserId(userId) {
+		try {
+			await knex(this.tableName).where("user_id", userId).del()
+
+			return {
+				ok: true
+			}
+		} catch (err) {
+			console.log(err)
+			return {
+				ok: false,
+				error: err
+			}
+		} finally {
+			console.log("deleteByUserId completed on users_tweets table")	
+		}
+	}
+
+	async deleteByTweetId(tweetId) {
+		//TBD
+	}
 }
 
 export default Favorite

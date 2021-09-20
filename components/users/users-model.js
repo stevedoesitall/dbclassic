@@ -242,6 +242,24 @@ class User extends Model {
 			console.log("updateOne completed on users table")
 		}
 	}
+
+	async deleteOne(id) {
+		try {
+			await knex(this.tableName).where("id", id).del()
+
+			return {
+				ok: true
+			}
+		} catch (err) {
+			console.log(err)
+			return {
+				ok: false,
+				error: err
+			}
+		} finally {
+			console.log("deleteOne completed on users table")	
+		}
+	}
 }
 
 export default User

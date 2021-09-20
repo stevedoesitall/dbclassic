@@ -2,6 +2,7 @@ const loginBtn = document.querySelector("#login-button")
 const userNameInput = document.querySelector("#user-name-input")
 const passwordInput = document.querySelector("#password-input")
 const loginMsg = document.querySelector("#login-msg")
+const showPasswordButtons = document.querySelectorAll(".show-password-button")
 
 const updateLoginMsg = (msg, status) => {
 	loginMsg.textContent = msg
@@ -49,4 +50,16 @@ loginBtn.addEventListener("click", async () => {
 	} catch (err) {
 		updateLoginMsg(err, "error")
 	}
+})
+
+showPasswordButtons.forEach(button => {
+	button.addEventListener("click", (e) => {
+		if (e.target.textContent === "Show") {
+			e.target.textContent = "Hide"
+			button.previousElementSibling.type = "text"
+		} else {
+			e.target.textContent = "Show"
+			button.previousElementSibling.type = "password"
+		}
+	})
 })

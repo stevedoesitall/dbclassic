@@ -141,6 +141,14 @@ const pagesController = {
 		res.render("signup")
 	},
 
+	async renderDelete(req, res) {
+		res.render("delete")
+	},
+
+	async renderReset(req, res) {
+		res.render("reset")
+	},
+
 	async renderError(req, res) {
 		res.render("error", {
 			errMsg: "Page doesn't exist. Kinda concerning?"
