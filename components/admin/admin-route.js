@@ -3,7 +3,7 @@ import adminController from "./admin-controller.js"
 
 const router = Router()
 
-router.get("/user", adminController.checkName)
+router.get("/user", adminController.checkUser)
 
 router.post("/signup", adminController.signup)
 router.post("/login", adminController.login)

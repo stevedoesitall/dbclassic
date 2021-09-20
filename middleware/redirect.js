@@ -16,7 +16,6 @@ const redirect = async (req, res, next) => {
 		}
 	}
 
-
 	const currentPath = req.route.path.substring(1)
 	const accountRedirectPages = [ "account" ]
 	const loginRedirectPages = [ "login", "signup" ]

@@ -2,6 +2,7 @@ import crypto from "node:crypto"
 import bcrypt from "bcrypt"
 import dotenv from "dotenv"
 import transporter from "../../config/mail-creds.js"
+import validateEmail from "../../utils/validate-email.js"
 import User from "../users/users-model.js"
 import Favorite from "../favorites/favorites-model.js"
 
@@ -69,18 +70,28 @@ const adminController = {
 		//TBD
 	},
 
-	async checkName(req, res) {
-		const userName = req.query.name
-		const data = await user.fetchByName(userName)
+	async checkUser(req, res) {
+		let data
+		let type
+
+		if (req.query.name) {
+			type = "Username"
+			const userName = req.query.name
+			data = await user.fetchByName(userName)
+		} else if (req.query.email) {
+			type = "Email"
+			const userEmail = req.query.email
+			data = await user.fetchByEmail(userEmail)
+		}
 
 		if (!data.ok) {
 			return res.status(204).json({
-				message: "Username doesn't exist."
+				message: `${type} doesn't exist.`
 			})
 		}
 
 		return res.status(200).json({
-			message: "Username exists."
+			message: `${type} exists.`
 		})
 
 	},
@@ -139,15 +150,24 @@ const adminController = {
 			})
 		}
 
+		if (!validateEmail(req.body.email)) {
+			return res.status(401).json({
+				ok: false,
+				error: "Invalid email address."
+			})
+		}
+
 		const password = await bcrypt.hash(req.body.password, SALT_ROUNDS)
 		const token = "token-" + crypto.randomUUID()
 		const tokenTime = new Date().toISOString()
-		
+		const email = req.body.email.toLowerCase()
+
 		const values = {
 			user_name: userName,
 			password,
 			token,
-			token_time: tokenTime
+			token_time: tokenTime,
+			email: email
 		}
 
 		const insert = await user.insertOne(userId, values)
@@ -161,7 +181,7 @@ const adminController = {
 
 		const mailOptions = {
 			from: "momusio@yahoo.com",
-			to: "stephenagiordano@gmail.com",
+			to: email,
 			subject: "Account verification for Momus.io",
 			text: `Verify signup for ${userName}. Click here: ${process.env.BASE_URL}/verify/${token}`
 		}

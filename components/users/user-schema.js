@@ -70,6 +70,12 @@ const userSchema = {
 		minLength: 10,
 		maxLength: 24,
 		allowNull: true
+	},
+	email: {
+		type: "string",
+		minLength: 5,
+		maxLength: 50,
+		allowNull: true
 	}
 }
 

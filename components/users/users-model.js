@@ -61,6 +61,32 @@ class User extends Model {
 		}
 	}
 
+	async fetchByEmail(email) {
+		try {
+
+			const results = await knex(this.tableName).where("email", email)
+			const result = results[0]
+
+			if (!result) {
+				throw new Error(`Email ${email} does not exist on users table.`)
+			}
+
+			return {
+				ok: true,
+				result
+			}
+		} catch (err) {
+			console.log(err)
+			
+			return {
+				ok: false,
+				error: err
+			}
+		} finally {
+			console.log("fetchByEmail completed on users table")
+		}
+	}
+
 	async fetchByToken(token) {
 		try {
 
@@ -165,7 +191,7 @@ class User extends Model {
 			}
 
 			const { user_name, password } = values
-			console.log("ID", password)
+
 			if (!id || !user_name || !password) {
 				errMsg = "Missing all required parameters."
 				throw new Error(errMsg)

@@ -1,6 +1,7 @@
 const signupBtn = document.querySelector("#signup-button")
 const userNameInput = document.querySelector("#user-name-input")
 const passwordInput = document.querySelector("#password-input-1")
+const emailInput = document.querySelector("#email-input")
 const confirmPasswordInput = document.querySelector("#password-input-2")
 const allPasswordReqs = document.querySelectorAll(".pass-req")
 const showPasswordButtons = document.querySelectorAll(".show-password-button")
@@ -30,8 +31,14 @@ const passwordRequirementsObj = {
 	}
 }
 
+const validateEmail = (email) => {
+	const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+	return regex.test(email.toLowerCase())
+}
+
 let userNameIsValid = false
 let passwordIsValid = false
+let emailIsValid = false
 
 const updateStatus = (el, add, remove) => {
 	el.classList.add(add)
@@ -65,12 +72,6 @@ const checkIfPasswordMatch = () => {
 	}
 }
 
-// const checkIfPasswordIsValid = () => {
-// 	return Object.values(passwordRequirementsObj).some(val => val.status === false)
-// }
-
-let successCount = 0
-
 showPasswordButtons.forEach(button => {
 	button.addEventListener("click", (e) => {
 		if (e.target.textContent === "Show") {
@@ -81,6 +82,45 @@ showPasswordButtons.forEach(button => {
 			button.previousElementSibling.type = "password"
 		}
 	})
+})
+
+emailInput.addEventListener("keyup", async () => {
+	emailInput.classList.remove("required")
+	const emailMessage = document.querySelector("#email-message")
+
+	if (emailInput.value.length < 3) {
+		return emailMessage.classList.add("hidden")
+	} 
+
+	emailMessage.classList.remove("hidden")
+
+	const isValidEmail = validateEmail(emailInput.value)
+
+	const formatEmail = (email) => {
+		const pos = email.indexOf("@")
+		const emailName = email.substring(0, pos)
+		const emailDomain = emailInput.value.substring(pos)
+		return encodeURIComponent(emailName.replaceAll(".", "") + emailDomain)
+	}
+
+	const response = await fetch("/admin/user?email=" + formatEmail(emailInput.value))
+
+	emailIsValid = false
+
+	if (isValidEmail) {
+		console.log(response.status)
+		if (response.status === 204) {
+			emailMessage.textContent = "Email available"
+			updateStatus(emailMessage, "success", "error")
+			emailIsValid = true
+		} else if (response.status === 200) {
+			emailMessage.textContent = "Email unavailable"
+			updateStatus(emailMessage, "error", "success")
+		}
+	} else {
+		emailMessage.textContent = "Invalid email address"
+		updateStatus(emailMessage, "error", "success")
+	}
 })
 
 userNameInput.addEventListener("keyup", async () => {
@@ -109,6 +149,7 @@ userNameInput.addEventListener("keyup", async () => {
 
 window.onload = () => {
 	userNameInput.value = ""
+	emailInput.value = ""
 }
 
 window.addEventListener("keyup", () => {
@@ -180,7 +221,11 @@ signupBtn.addEventListener("click", async () => {
 		confirmPasswordInput.classList.add("required")
 	}
 
-	if (!userNameIsValid || !passwordIsValid || !passwordsMatch) {
+	if (!emailIsValid) {
+		emailInput.classList.add("required")
+	}
+
+	if (!userNameIsValid || !passwordIsValid || !passwordsMatch || !emailIsValid) {
 		signupMessage.textContent = "Please fix all errors."
 		return statusContainer.classList.remove("hidden")
 	}
@@ -194,7 +239,8 @@ signupBtn.addEventListener("click", async () => {
 			body: JSON.stringify({
 				userName: userNameInput.value,
 				password: passwordInput.value,
-				confirmPassword: confirmPasswordInput.value
+				confirmPassword: confirmPasswordInput.value,
+				email: emailInput.value
 			})
 		})
 
