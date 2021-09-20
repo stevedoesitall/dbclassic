@@ -8,6 +8,11 @@ const favorite = new Favorite()
 
 const pagesController = {
 	async renderHome(req, res) {
+		req.session.destroy((err) => {
+			if (err) {
+				console.log(err)
+			}
+		})
 		const data = await tweet.fetchDates()
 		const { loggedIn } = req.session
 		const { allDates, yearHeaders } = data.results
