@@ -7,7 +7,7 @@ const redirect = async (req, res, next) => {
 		const userId = req.session.loginId
 		const data = await user.fetchById(userId)
 
-		if (!data.result.id) {
+		if (!data.ok) {
 			req.session.destroy((err) => {
 				if (err) {
 					console.log(err)
