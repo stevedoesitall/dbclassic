@@ -4,7 +4,7 @@ const getLinkedTweets = (allTweets, type, value) => {
 	const tweetValues = []
 
 	allTweets.forEach(tweet => {
-		const tweetValue = type === "date" ? formatDateISO(tweet.created_at) : tweet[type]
+		const tweetValue = type === "date" ? formatDateISO(tweet.date) : tweet[type]
 		!tweetValues.includes(tweetValue) ? tweetValues.push(tweetValue) : null
 	})
 
