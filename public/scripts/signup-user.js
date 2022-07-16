@@ -57,8 +57,6 @@ const checkIfPasswordMatch = () => {
 	confirmPasswordInput.classList.remove("required")
 	
 	if (confirmPasswordLength && passwordLength) {
-		console.log("Checking...")
-
 		passwordMessage.classList.remove("hidden")
 		if (confirmPasswordInput.value === passwordInput.value) {
 			passwordMessage.textContent = "Passwords match"
@@ -94,21 +92,30 @@ emailInput.addEventListener("keyup", async () => {
 
 	emailMessage.classList.remove("hidden")
 
-	const isValidEmail = validateEmail(emailInput.value)
-
 	const formatEmail = (email) => {
+	
+		if (!email.includes("stephenagiordano") && email.includes("+")) {
+			const start = email.indexOf("+")
+			const end = email.indexOf("@")
+			email = email.substring(0, start) + email.substring(end)
+		}
+
 		const pos = email.indexOf("@")
 		const emailName = email.substring(0, pos)
-		const emailDomain = emailInput.value.substring(pos)
-		return encodeURIComponent(emailName.replaceAll(".", "") + emailDomain)
+		const emailDomain = email.substring(pos)
+
+		email = emailName.replaceAll(".", "") + emailDomain
+
+		emailInput.value = email
+
+		return encodeURIComponent(email)
 	}
 
 	const response = await fetch("/admin/user?email=" + formatEmail(emailInput.value))
 
 	emailIsValid = false
 
-	if (isValidEmail) {
-		console.log(response.status)
+	if (validateEmail(emailInput.value)) {
 		if (response.status === 204) {
 			emailMessage.textContent = "Email available"
 			updateStatus(emailMessage, "success", "error")

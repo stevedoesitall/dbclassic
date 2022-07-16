@@ -1,4 +1,6 @@
 const trackSession = (req, res, next) => {
+	const pathsToTrack = [ "/tweet/", "/tweets" ] 
+
 	if (req.session.views) {
 		req.session.views++
 	} else {

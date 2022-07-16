@@ -67,7 +67,54 @@ const adminController = {
 	},
 
 	async reset(req, res) {
-		//TBD
+		const data = await user.fetchByEmail(req.body.email)
+
+		if (!data.ok) {
+			return res.status(204).json()
+		}
+
+		const email = data.result.email
+		const mailOptions = {
+			from: "momusio@yahoo.com",
+			to: email
+		}
+
+		if (req.body.type === "send-username") {
+			const userName = data.result.user_name
+
+			mailOptions.subject = "Your Momus.io Username"
+			mailOptions.html = `Your username is: <b>${userName}</b>.`
+			mailOptions.text = `Your username is: ${userName}.`
+		} else if (req.body.type === "reset-password") {
+			const userId = data.result.id
+			const resetToken = "token-" + crypto.randomUUID()
+			const resetTokenTime = new Date().toISOString()
+
+			const values = {
+				reset_token: resetToken,
+				reset_verified: false,
+				reset_token_time: resetTokenTime
+			}
+	
+			const update = await user.updateOne(userId, values)
+			console.log(update)
+
+			mailOptions.subject = "Reset Your Momus.io Password"
+			mailOptions.html = `Click <a href="${process.env.BASE_URL}/reset/${resetToken}">here</a> to reset your password.`
+			mailOptions.text = `Click here to reset your password: ${process.env.BASE_URL}/reset/${resetToken}.`
+		}
+
+		transporter.sendMail(mailOptions, (err, res) => {
+			if (err) {
+				console.log(err)
+			} else {
+				console.log(res)
+			}
+		})
+
+		return res.status(200).json({
+			ok: true
+		})
 	},
 
 	async checkUser(req, res) {
@@ -98,7 +145,7 @@ const adminController = {
 
 	async delete(req, res) {
 		let errMsg
-		//Note to delete references to the users_tweets table too
+
 		try {
 			const userId = req.session.loginId
 
@@ -183,7 +230,8 @@ const adminController = {
 			from: "momusio@yahoo.com",
 			to: email,
 			subject: "Account verification for Momus.io",
-			text: `Verify signup for ${userName}. Click here: ${process.env.BASE_URL}/verify/${token}`
+			html: `Verify signup for <b>${userName}</b>. Click <a href="${process.env.BASE_URL}/verify/${token}">here.`,
+			text: `Verify signup for ${userName}. Click here: ${process.env.BASE_URL}/verify/${token}.`
 		}
 		
 		transporter.sendMail(mailOptions, (err, res) => {

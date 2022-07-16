@@ -15,6 +15,7 @@ router.get("/delete", pagesController.renderDelete)
 router.get("/reset", pagesController.renderReset)
 router.get("/login", redirect, pagesController.renderLogin)
 router.get("/signup", redirect, pagesController.renderSignup)
+router.get("/forgot", redirect, pagesController.renderForgot)
 router.get("/verify/:id", verifySignup, pagesController.renderVerify)
 router.get("*", pagesController.renderError)
 

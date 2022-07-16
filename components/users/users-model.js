@@ -109,7 +109,7 @@ class User extends Model {
 				error: err
 			}
 		} finally {
-			console.log("fetchById completed on users table")
+			console.log("fetchByToken completed on users table")
 		}
 	}
 
@@ -231,7 +231,7 @@ class User extends Model {
 				throw new Error(errMsg)
 			}
 
-			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id", "is_verified", "token", "token_time" ]
+			const allowedUpdates = [ "last_pageview", "password", "user_name", "latest_session_id", "is_verified", "token", "token_time", "reset_token", "reset_token_time", "reset_verified" ]
 
 			for (let key in values) {
 				const value = values[key]

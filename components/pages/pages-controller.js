@@ -152,6 +152,10 @@ const pagesController = {
 		res.render("reset")
 	},
 
+	async renderForgot(req, res) {
+		res.render("forgot")
+	},
+
 	async renderError(req, res) {
 		res.render("error", {
 			errMsg: "Page doesn't exist. Kinda concerning?"

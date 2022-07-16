@@ -29,7 +29,7 @@ const userSchema = {
 		maxLength: 10,
 		allowNull: true
 	},
-	create_time: {
+	created_at: {
 		type: "date",
 		minLength: 10,
 		maxLength: 24,
@@ -75,6 +75,24 @@ const userSchema = {
 		type: "string",
 		minLength: 5,
 		maxLength: 50,
+		allowNull: true
+	},
+	reset_token: {
+		type: "string",
+		minLength: 42,
+		maxLength: 42,
+		allowNull: true
+	},
+	reset_verified: {
+		type: "boolean",
+		minLength: undefined,
+		maxLength: undefined,
+		allowNull: true
+	},
+	reset_token_time: {
+		type: "date",
+		minLength: 10,
+		maxLength: 24,
 		allowNull: true
 	}
 }
